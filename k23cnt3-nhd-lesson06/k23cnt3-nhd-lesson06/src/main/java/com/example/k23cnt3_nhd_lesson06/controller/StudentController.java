@@ -23,14 +23,14 @@ public class StudentController {
     @GetMapping
     public String getStudents(Model model) {
         model.addAttribute("students", studentService.findAll());
-        return "students/student-list";
+        return "student-list";
     }
 
     // Trang thêm sinh viên mới
-    @GetMapping("/student-add")
+    @GetMapping("/add-new")
     public String addNewStudent(Model model) {
         model.addAttribute("student", new Student());
-        return "students/student-add";
+        return "student-add";
     }
 
     // Trang chỉnh sửa sinh viên
@@ -39,7 +39,7 @@ public class StudentController {
         StudentDTO student = studentService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid student Id: " + id));
         model.addAttribute("student", student);
-        return "students/student-edit";
+        return "student-edit";
     }
 
     // Lưu sinh viên mới
