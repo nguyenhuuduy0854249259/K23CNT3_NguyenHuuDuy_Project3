@@ -60,7 +60,7 @@ public class DataInitializer {
 
                 nguoiDungRepository.save(admin);
             }
-
+            // ==================================
             /* =====================
                3. Tạo tài khoản USER
                ===================== */
