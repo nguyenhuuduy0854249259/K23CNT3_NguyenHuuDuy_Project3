@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout/_LayoutUser :: layout(
+          'Danh sách sản phẩm',
+          ~{::content},
+          ~{}
+      )">
+
+<th:block th:fragment="content">
+
+    <h2>Danh sách sản phẩm</h2>
+
+    <div class="row">
+
+        <!-- KHÔNG CÓ SẢN PHẨM -->
+        <div class="col-12"
+             th:if="${list == null || #lists.isEmpty(list)}">
+            <p class="text-danger text-center">
+                Hiện chưa có sản phẩm nào.
+            </p>
+        </div>
+
+        <!-- CÓ SẢN PHẨM -->
+        <div class="col-md-3 mb-4"
+             th:each="sp : ${list}">
+
+            <div class="card h-100">
+
+                <!-- ẢNH SẢN PHẨM (CÓ ẢNH / KHÔNG ẢNH ĐỀU OK) -->
+                <img th:src="${sp.hinhAnh != null and sp.hinhAnh != ''}
+                                ? @{/images/{img}(img=${sp.hinhAnh})}
+                                : @{/images/no-image.png}"
+                     class="card-img-top"
+                     alt="Ảnh sản phẩm"
+                     style="height:180px; object-fit:cover">
+
+                <div class="card-body">
+                    <h6 class="card-title"
+                        th:text="${sp.ten}">
+                    </h6>
+
+                    <p class="text-danger fw-bold">
+                        <span th:text="${#numbers.formatDecimal(sp.gia,0,'POINT',0,'COMMA')}"></span> đ
+                    </p>
+
+                    <p class="small text-muted"
+                       th:text="${sp.thuongHieu != null ? sp.thuongHieu.ten : 'Chưa rõ thương hiệu'}">
+                    </p>
+                </div>
+
+                <div class="card-footer text-center">
+                    <a th:href="@{/sanpham/{id}(id=${sp.id})}"
+                       class="btn btn-sm btn-primary">
+                        Xem chi tiết
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</th:block>
+
+</html>

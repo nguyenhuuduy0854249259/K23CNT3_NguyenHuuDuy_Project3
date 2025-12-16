@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/header :: head"></head>
+
+<body>
+<div th:replace="layout/header :: navbar"></div>
+
+<h2>Thanh toán</h2>
+
+<form action="/checkout" method="post">
+    <label>Họ tên:</label>
+    <input type="text" name="fullname" required>
+
+    <label>Địa chỉ:</label>
+    <input type="text" name="address" required>
+
+    <label>Số điện thoại:</label>
+    <input type="text" name="phone" required>
+
+    <button type="submit" class="btn">Đặt hàng</button>
+</form>
+
+<div th:replace="layout/footer :: footer"></div>
+</body>
+</html>

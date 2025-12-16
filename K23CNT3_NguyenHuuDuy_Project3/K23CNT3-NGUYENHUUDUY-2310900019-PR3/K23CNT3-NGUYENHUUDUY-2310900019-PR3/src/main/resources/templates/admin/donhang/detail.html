@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<h2>CHI TIẾT ĐƠN HÀNG</h2>
+
+<p><b>Mã đơn:</b> <span th:text="${donHang.maDonHang}"></span></p>
+<p><b>Ngày đặt:</b> <span th:text="${donHang.ngayDat}"></span></p>
+<p><b>Trạng thái:</b> <span th:text="${donHang.trangThai}"></span></p>
+
+<hr/>
+
+<h3>Thông tin người nhận</h3>
+<p>Họ tên: <span th:text="${donHang.tenNguoiNhan}"></span></p>
+<p>SĐT: <span th:text="${donHang.soDienThoaiNhan}"></span></p>
+<p>Địa chỉ: <span th:text="${donHang.diaChiNhan}"></span></p>
+
+<hr/>
+
+<h3>Danh sách sản phẩm</h3>
+<table border="1">
+    <tr>
+        <th>Sản phẩm</th>
+        <th>Số lượng</th>
+        <th>Giá</th>
+        <th>Thành tiền</th>
+    </tr>
+
+    <tr th:each="ct : ${donHang.chiTietDonHang}">
+        <td th:text="${ct.sanPham.ten}"></td>
+        <td th:text="${ct.soLuong}"></td>
+        <td th:text="${ct.gia}"></td>
+        <td th:text="${ct.soLuong * ct.gia}"></td>
+    </tr>
+</table>
+
+<h3>TỔNG TIỀN: <span th:text="${donHang.tongTien}"></span></h3>
+
+<br/>
+<a th:href="@{/admin/don-hang}">← Quay lại danh sách</a>
+</body>
+</html>

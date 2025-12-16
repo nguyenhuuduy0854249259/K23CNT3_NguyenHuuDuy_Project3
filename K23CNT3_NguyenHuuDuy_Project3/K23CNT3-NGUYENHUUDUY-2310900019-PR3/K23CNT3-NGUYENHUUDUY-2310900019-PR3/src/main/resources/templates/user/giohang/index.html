@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<h2>GIỎ HÀNG</h2>
+
+<table border="1">
+    <tr>
+        <th>Sản phẩm</th>
+        <th>Số lượng</th>
+    </tr>
+
+    <tr th:each="ct : ${gioHang.chiTietList}">
+        <td th:text="${ct.sanPham.ten}"></td>
+        <td th:text="${ct.soLuong}"></td>
+    </tr>
+</table>
+
+<form th:action="@{/thanh-toan}" method="post">
+    <button type="submit">Thanh toán</button>
+</form>
+</body>
+</html>

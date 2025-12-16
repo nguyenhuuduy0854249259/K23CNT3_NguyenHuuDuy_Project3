@@ -1,0 +1,19 @@
+<h2>Quản lý đánh giá</h2>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Sản phẩm</th>
+        <th>Số sao</th>
+        <th>Bình luận</th>
+        <th>Hành động</th>
+    </tr>
+
+    <tr th:each="dg : ${list}">
+        <td th:text="${dg.sanPham.ten}"></td>
+        <td th:text="${dg.soSao}"></td>
+        <td th:text="${dg.binhLuan}"></td>
+        <td>
+            <a th:href="@{/admin/danhgia/xoa/{id}(id=${dg.id})}">Xóa</a>
+        </td>
+    </tr>
+</table>

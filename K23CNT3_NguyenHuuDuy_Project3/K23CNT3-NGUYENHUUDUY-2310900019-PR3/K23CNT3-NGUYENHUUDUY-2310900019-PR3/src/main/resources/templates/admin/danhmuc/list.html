@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<h2>DANH MỤC</h2>
+
+<a th:href="@{/admin/danh-muc/them}">+ Thêm danh mục</a>
+
+<ul>
+    <li th:each="dm : ${listDanhMuc}">
+        <span th:text="${dm.ten}"></span>
+        <a th:href="@{/admin/danh-muc/sua/{id}(id=${dm.id})}">Sửa</a>
+    </li>
+</ul>
+</body>
+</html>

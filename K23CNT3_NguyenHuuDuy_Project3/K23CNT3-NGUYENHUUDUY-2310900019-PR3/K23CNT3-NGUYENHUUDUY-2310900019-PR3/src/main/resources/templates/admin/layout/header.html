@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="admin_head">
+    <meta charset="UTF-8">
+    <title>Admin</title>
+</head>
+
+<body th:fragment="admin_navbar">
+
+<div style="background:#333;color:white;padding:10px">
+    <b>ADMIN PANEL</b> |
+    <a th:href="@{/admin}" style="color:white">Dashboard</a> |
+    <a th:href="@{/admin/products}" style="color:white">Sản phẩm</a> |
+    <a th:href="@{/admin/categories}" style="color:white">Danh mục</a> |
+    <a th:href="@{/admin/orders}" style="color:white">Đơn hàng</a> |
+    <a th:href="@{/admin/users}" style="color:white">Người dùng</a> |
+    <a th:href="@{/logout}" style="color:white">Đăng xuất</a>
+</div>
+
+</body>
+</html>

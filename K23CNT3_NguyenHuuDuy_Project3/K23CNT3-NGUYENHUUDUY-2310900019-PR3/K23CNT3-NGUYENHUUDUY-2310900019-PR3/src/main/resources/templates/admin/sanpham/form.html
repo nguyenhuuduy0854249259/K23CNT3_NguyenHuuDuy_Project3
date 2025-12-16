@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<h2>THÊM / SỬA SẢN PHẨM</h2>
+
+<form th:action="@{/admin/san-pham/luu}" th:object="${sanPham}" method="post">
+    <input type="hidden" th:field="*{id}"/>
+
+    Tên:
+    <input type="text" th:field="*{ten}"/><br/>
+
+    Giá:
+    <input type="number" th:field="*{gia}"/><br/>
+
+    Số lượng tồn:
+    <input type="number" th:field="*{soLuongTon}"/><br/>
+
+    Mô tả:
+    <textarea th:field="*{moTa}"></textarea><br/>
+
+    Danh mục:
+    <select th:field="*{danhMuc}">
+        <option th:each="dm : ${listDanhMuc}"
+                th:value="${dm}"
+                th:text="${dm.ten}">
+        </option>
+    </select><br/>
+
+    <button type="submit">Lưu</button>
+</form>
+</body>
+</html>

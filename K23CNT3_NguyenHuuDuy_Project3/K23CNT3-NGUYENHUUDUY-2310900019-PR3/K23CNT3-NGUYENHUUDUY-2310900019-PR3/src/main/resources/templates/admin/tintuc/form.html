@@ -1,0 +1,19 @@
+<h2>Thêm / sửa tin tức</h2>
+
+<form th:action="@{/admin/tintuc/luu}"
+      th:object="${tinTuc}" method="post">
+
+    <input type="hidden" th:field="*{id}"/>
+
+    Tiêu đề:
+    <input type="text" th:field="*{tieuDe}" class="form-control"/>
+
+    Ảnh đại diện:
+    <input type="text" th:field="*{anhDaiDien}" class="form-control"/>
+
+    Nội dung:
+    <textarea th:field="*{noiDung}"
+              class="form-control" rows="6"></textarea>
+
+    <button class="btn btn-success mt-2">Lưu</button>
+</form>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/header :: head"></head>
+
+<body>
+<div th:replace="layout/header :: navbar"></div>
+
+<div class="product-detail">
+    <img th:src="@{|/static/images/${product.image}|}">
+    <h1 th:text="${product.name}"></h1>
+    <p th:text="${product.description}"></p>
+    <h3 th:text="${product.price} + ' VNĐ'"></h3>
+
+    <a th:href="@{'/cart/add/' + ${product.id}}" class="btn">Thêm vào giỏ</a>
+</div>
+
+<div th:replace="layout/footer :: footer"></div>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<h2>ĐƠN HÀNG</h2>
+
+<table border="1">
+    <tr>
+        <th>Mã</th>
+        <th>Ngày đặt</th>
+        <th>Tổng tiền</th>
+        <th>Trạng thái</th>
+    </tr>
+
+    <tr th:each="dh : ${listDonHang}">
+        <td th:text="${dh.maDonHang}"></td>
+        <td th:text="${dh.ngayDat}"></td>
+        <td th:text="${dh.tongTien}"></td>
+        <td th:text="${dh.trangThai}"></td>
+    </tr>
+</table>
+</body>
+</html>

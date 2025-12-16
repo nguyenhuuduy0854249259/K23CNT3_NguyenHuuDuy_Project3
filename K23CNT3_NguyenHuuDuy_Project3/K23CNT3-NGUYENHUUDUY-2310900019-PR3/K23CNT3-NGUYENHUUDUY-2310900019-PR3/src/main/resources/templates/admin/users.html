@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="layout/admin_header :: admin_head"></head>
+
+<body>
+
+<div th:replace="layout/admin_header :: admin_navbar"></div>
+
+<h1>Quản lý người dùng</h1>
+
+<table class="admin-table">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Tên đăng nhập</th>
+        <th>Họ tên</th>
+        <th>Quyền</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="u : ${users}">
+        <td th:text="${u.id}"></td>
+        <td th:text="${u.tenDangNhap}"></td>
+        <td th:text="${u.hoTen}"></td>
+        <td th:text="${u.quyen}"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

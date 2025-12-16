@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<h2 xmlns:th="http://www.w3.org/1999/xhtml">Quản lý tin tức</h2>
+
+<a th:href="@{/admin/tintuc/them}" class="btn btn-primary mb-2">
+    + Thêm tin
+</a>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Tiêu đề</th>
+        <th>Thời gian</th>
+        <th>Hành động</th>
+    </tr>
+
+    <tr th:each="tt : ${list}">
+        <td th:text="${tt.tieuDe}"></td>
+        <td th:text="${#temporals.format(tt.thoiGian,'dd/MM/yyyy')}"></td>
+        <td>
+            <a th:href="@{/admin/tintuc/sua/{id}(id=${tt.id})}">Sửa</a> |
+            <a th:href="@{/admin/tintuc/xoa/{id}(id=${tt.id})}">Xóa</a>
+        </td>
+    </tr>
+</table>
+</html>

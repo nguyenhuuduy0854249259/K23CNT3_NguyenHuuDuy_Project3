@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="vi"
+      th:replace="layout/_LayoutUser :: layout(
+          'Đăng nhập',
+          ~{::content},
+          ~{}
+      )">
+
+<th:block th:fragment="content">
+
+    <div class="login-box" style="
+            max-width: 400px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 6px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.15);
+        ">
+
+        <h2 style="text-align:center; margin-bottom:20px;">Đăng nhập</h2>
+
+        <!-- Form login -->
+        <form th:action="@{/auth/do-login}" method="post">
+
+            <!-- Email -->
+            <label>Email</label>
+            <input type="text" name="username" required
+                   style="width:100%; padding:8px; margin-bottom:10px;"
+                   placeholder="Nhập email">
+
+            <!-- Mật khẩu -->
+            <label>Mật khẩu</label>
+            <input type="password" name="password" required
+                   style="width:100%; padding:8px; margin-bottom:15px;"
+                   placeholder="Nhập mật khẩu">
+
+            <!-- Nút đăng nhập -->
+            <button type="submit"
+                    style="width:100%; padding:10px;
+                           background:#f4a100; border:none; font-weight:bold;">
+                Đăng nhập
+            </button>
+
+            <!-- Hiển thị lỗi nếu login thất bại -->
+            <p th:if="${param.error}" style="color:red; margin-top:10px;">
+                Sai email hoặc mật khẩu!
+            </p>
+
+            <!-- Hiển thị thông báo logout thành công -->
+            <p th:if="${param.logout}" style="color:green; margin-top:10px;">
+                Đã đăng xuất!
+            </p>
+
+        </form>
+
+        <!-- Link đăng ký -->
+        <p style="text-align:center; margin-top:15px;">
+            Chưa có tài khoản?
+            <a th:href="@{/auth/register}">Đăng ký</a>
+        </p>
+
+    </div>
+
+</th:block>
+</html>

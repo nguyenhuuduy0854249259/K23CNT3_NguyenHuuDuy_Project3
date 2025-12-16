@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <title th:text="${title} ?: 'Thiết Bị Xây Dựng'"></title>
+<!--    <link rel="stylesheet" th:href="@{/css/style.css}">-->
+</head>
+
+<body>
+
+<nav th:fragment="navbar" class="navbar">
+    <a href="/" class="logo">TBXD</a>
+
+    <ul class="menu">
+        <li><a th:href="@{/}">Trang chủ</a></li>
+        <li><a th:href="@{/products}">Sản phẩm</a></li>
+        <li><a th:href="@{/cart}">Giỏ hàng</a></li>
+        <li><a th:href="@{/auth/login}">Đăng nhập</a></li>
+    </ul>
+</nav>
+
+</body>
+</html>

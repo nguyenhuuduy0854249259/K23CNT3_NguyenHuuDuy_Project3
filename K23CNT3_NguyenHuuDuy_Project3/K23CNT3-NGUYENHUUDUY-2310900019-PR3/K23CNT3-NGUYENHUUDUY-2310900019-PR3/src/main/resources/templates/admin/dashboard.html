@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="layout/admin_header :: admin_head"></head>
+
+<body>
+
+<div th:replace="layout/admin_header :: admin_navbar"></div>
+
+<section class="dashboard">
+    <h1>Dashboard Admin</h1>
+
+    <div class="stats">
+        <div class="card">
+            <h3>Tổng sản phẩm</h3>
+            <p th:text="${totalProducts}"></p>
+        </div>
+
+        <div class="card">
+            <h3>Tổng đơn hàng</h3>
+            <p th:text="${totalOrders}"></p>
+        </div>
+
+        <div class="card">
+            <h3>Người dùng</h3>
+            <p th:text="${totalUsers}"></p>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout/_LayoutUser :: layout(
+          'Liên hệ',
+          ~{::content},
+          ~{}
+      )">
+
+<th:block th:fragment="content">
+
+    <h2>Liên hệ</h2>
+
+    <form th:action="@{/lienhe/gui}"
+          th:object="${lienHe}" method="post">
+
+        Họ tên:
+        <input type="text" th:field="*{hoTen}" class="form-control"/>
+
+        Email:
+        <input type="email" th:field="*{email}" class="form-control"/>
+
+        Số điện thoại:
+        <input type="text" th:field="*{soDienThoai}" class="form-control"/>
+
+        Nội dung:
+        <textarea th:field="*{noiDung}"
+                  class="form-control"></textarea>
+
+        <button class="btn btn-primary mt-3">Gửi liên hệ</button>
+    </form>
+
+</th:block>
+</html>

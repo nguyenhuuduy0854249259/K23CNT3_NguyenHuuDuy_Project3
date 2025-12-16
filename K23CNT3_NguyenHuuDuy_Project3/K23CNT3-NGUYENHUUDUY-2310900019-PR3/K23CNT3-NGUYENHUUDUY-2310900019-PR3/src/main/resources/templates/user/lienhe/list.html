@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout/_LayoutUser :: layout(
+          'Liên hệ',
+          ~{::content},
+          ~{}
+      )">
+
+<h2>Danh sách liên hệ</h2>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Họ tên</th>
+        <th>Email</th>
+        <th>SĐT</th>
+        <th>Thời gian</th>
+    </tr>
+
+    <tr th:each="lh : ${list}">
+        <td th:text="${lh.hoTen}"></td>
+        <td th:text="${lh.email}"></td>
+        <td th:text="${lh.soDienThoai}"></td>
+        <td th:text="${#temporals.format(lh.thoiGianGui,'dd/MM/yyyy HH:mm')}"></td>
+    </tr>
+</table>
+</html>

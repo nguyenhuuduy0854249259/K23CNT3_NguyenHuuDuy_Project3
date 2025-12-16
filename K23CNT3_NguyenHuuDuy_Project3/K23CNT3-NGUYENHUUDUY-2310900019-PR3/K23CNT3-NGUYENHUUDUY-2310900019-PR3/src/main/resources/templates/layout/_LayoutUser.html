@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="vi"
+      th:fragment="layout(title, content, customScripts)">
+
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">Vật Liệu Xây Dựng</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        * { box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
+        body { margin: 0; background-color: #f5f5f5; }
+
+        header { background-color: #f4a100; padding: 15px 0; }
+        .container { width: 90%; margin: auto; }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; }
+        .logo a { text-decoration: none; color: #000; font-size: 22px; font-weight: bold; }
+        nav a { margin-left: 15px; text-decoration: none; color: #000; font-weight: 500; }
+
+        main { width: 90%; margin: 20px auto; display: flex; gap: 20px; }
+
+        .content-left { width: 260px; }
+        .left-sidebar { background: #fff; border: 1px solid #ddd; padding: 15px; position: sticky; top: 90px; }
+
+        .sidebar-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #f4a100;
+            border-bottom: 2px solid #f4a100;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-menu, .submenu, .submenu-child {
+            list-style: none; padding: 0; margin: 0;
+        }
+
+        .sidebar-menu > li { border-bottom: 1px solid #eee; }
+        .sidebar-menu a {
+            display: block; padding: 10px;
+            text-decoration: none; color: #333; font-weight: 500;
+        }
+        .sidebar-menu a:hover { background-color: #f4a100; color: #000; }
+
+        .submenu { display: none; background: #fafafa; }
+        .sidebar-menu li:hover > .submenu { display: block; }
+        .submenu li a { padding-left: 20px; font-size: 14px; }
+
+        .submenu-child { display: none; background: #f1f1f1; }
+        .submenu li:hover > .submenu-child { display: block; }
+        .submenu-child li a { padding-left: 35px; font-size: 13px; color: #555; }
+
+        .content-right { flex: 1; background: #fff; padding: 20px; min-height: 400px; }
+
+        footer { background: #333; color: #fff; padding: 15px 0; text-align: center; margin-top: 30px; }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="container header-flex">
+        <div class="logo">
+            <a th:href="@{/}">🏗️ VẬT LIỆU XÂY DỰNG</a>
+        </div>
+        <nav>
+            <a th:href="@{/}">Trang chủ</a>
+            <a th:href="@{/sanpham}">Sản phẩm</a>
+            <a th:href="@{/giohang}">Giỏ hàng</a>
+            <a th:href="@{/lienhe}">Liên hệ</a>
+            <a th:href="@{/login}">Đăng nhập</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+
+    <!-- SIDEBAR LEFT -->
+    <div class="content-left">
+        <div class="left-sidebar">
+            <div class="sidebar-title">Danh mục</div>
+
+            <ul class="sidebar-menu">
+
+                <!-- XI MĂNG -->
+                <li>
+                    <a th:href="@{/sanpham(danhMucId=1)}">Xi măng</a>
+                    <ul class="submenu">
+                        <li><a th:href="@{/sanpham(danhMucId=2)}">Xi măng Hà Tiên</a></li>
+                        <li><a th:href="@{/sanpham(danhMucId=3)}">Xi măng Holcim</a></li>
+                        <li><a th:href="@{/sanpham(danhMucId=4)}">Xi măng Nghi Sơn</a></li>
+                    </ul>
+                </li>
+
+                <!-- SẮT THÉP -->
+                <li>
+                    <a th:href="@{/sanpham(danhMucId=5)}">Sắt thép</a>
+                    <ul class="submenu">
+                        <li>
+                            <a th:href="@{/sanpham(danhMucId=6)}">Thép thương mại</a>
+                            <ul class="submenu-child">
+                                <li><a th:href="@{/sanpham(danhMucId=7)}">Thép hộp</a></li>
+                                <li><a th:href="@{/sanpham(danhMucId=8)}">Thép hình</a></li>
+                                <li><a th:href="@{/sanpham(danhMucId=9)}">Thép ống</a></li>
+                            </ul>
+                        </li>
+                        <li><a th:href="@{/sanpham(danhMucId=10)}">Thép xây dựng</a></li>
+                    </ul>
+                </li>
+
+                <!-- TÔN -->
+                <li>
+                    <a th:href="@{/sanpham(danhMucId=11)}">Tôn lợp</a>
+                    <ul class="submenu">
+                        <li><a th:href="@{/sanpham(danhMucId=12)}">Tôn lạnh</a></li>
+                        <li><a th:href="@{/sanpham(danhMucId=13)}">Tôn cách nhiệt</a></li>
+                        <li><a th:href="@{/sanpham(danhMucId=14)}">Tôn mạ màu</a></li>
+                    </ul>
+                </li>
+
+                <!-- GẠCH -->
+                <li>
+                    <a th:href="@{/sanpham(danhMucId=15)}">Gạch – Đá</a>
+                    <ul class="submenu">
+                        <li>
+                            <a th:href="@{/sanpham(danhMucId=16)}">Gạch ốp lát</a>
+                            <ul class="submenu-child">
+                                <li><a th:href="@{/sanpham(danhMucId=17)}">Gạch men</a></li>
+                                <li><a th:href="@{/sanpham(danhMucId=18)}">Gạch granite</a></li>
+                            </ul>
+                        </li>
+                        <li><a th:href="@{/sanpham(danhMucId=19)}">Đá xây dựng</a></li>
+                    </ul>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+    <!-- CONTENT RIGHT -->
+    <div class="content-right">
+        <th:block th:replace="${content}"></th:block>
+    </div>
+
+</main>
+
+<footer>
+    <p>© 2025 Vật Liệu Xây Dựng</p>
+</footer>
+
+<th:block th:replace="${customScripts}"></th:block>
+
+</body>
+</html>

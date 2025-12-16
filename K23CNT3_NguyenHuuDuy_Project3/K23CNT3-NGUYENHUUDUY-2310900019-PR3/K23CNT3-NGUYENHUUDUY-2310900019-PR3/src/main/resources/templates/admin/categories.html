@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/admin_header :: admin_head"></head>
+
+<body>
+<div th:replace="layout/admin_header :: admin_navbar"></div>
+
+<h1>Danh mục</h1>
+
+<form th:action="@{/admin/categories/save}" method="post">
+    <input type="text" name="name" placeholder="Tên danh mục">
+    <button type="submit">Thêm</button>
+</form>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Tên</th>
+        <th>Hành động</th>
+    </tr>
+
+    <tr th:each="c : ${categories}">
+        <td th:text="${c.id}"></td>
+        <td th:text="${c.name}"></td>
+        <td>
+            <a th:href="@{'/admin/categories/delete/' + ${c.id}}"
+               onclick="return confirm('Xóa?')">Xóa</a>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

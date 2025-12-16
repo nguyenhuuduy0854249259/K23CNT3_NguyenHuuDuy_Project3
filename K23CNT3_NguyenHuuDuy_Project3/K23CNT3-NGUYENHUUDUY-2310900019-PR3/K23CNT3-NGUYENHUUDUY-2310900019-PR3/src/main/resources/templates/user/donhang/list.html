@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<h2>ĐƠN HÀNG CỦA TÔI</h2>
+
+<ul>
+    <li th:each="dh : ${listDonHang}">
+        <b th:text="${dh.maDonHang}"></b>
+        - <span th:text="${dh.trangThai}"></span>
+        - <span th:text="${dh.tongTien}"></span>
+    </li>
+</ul>
+</body>
+</html>

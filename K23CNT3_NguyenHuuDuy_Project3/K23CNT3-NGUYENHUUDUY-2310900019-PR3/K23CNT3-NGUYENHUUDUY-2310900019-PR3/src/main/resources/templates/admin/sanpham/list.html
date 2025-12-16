@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<h2>QUẢN LÝ SẢN PHẨM</h2>
+
+<a th:href="@{/admin/san-pham/them}">+ Thêm sản phẩm</a>
+
+<table border="1">
+    <tr>
+        <th>Tên</th>
+        <th>Giá</th>
+        <th>Tồn kho</th>
+        <th>Danh mục</th>
+        <th>Hành động</th>
+    </tr>
+
+    <tr th:each="sp : ${listSanPham}">
+        <td th:text="${sp.ten}"></td>
+        <td th:text="${sp.gia}"></td>
+        <td th:text="${sp.soLuongTon}"></td>
+        <td th:text="${sp.danhMuc != null ? sp.danhMuc.ten : ''}"></td>
+        <td>
+            <a th:href="@{/admin/san-pham/sua/{id}(id=${sp.id})}">Sửa</a> |
+            <a th:href="@{/admin/san-pham/xoa/{id}(id=${sp.id})}">Xóa</a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
