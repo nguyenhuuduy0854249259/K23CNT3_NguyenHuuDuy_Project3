@@ -102,7 +102,7 @@ public class SanPhamController {
     // =========================
     // GỬI ĐÁNH GIÁ
     // =========================
-    @PostMapping("/danh-gia/{id}")
+    @PostMapping("/danhgia/{id}")
     public String submitDanhGia(@PathVariable Long id,
                                 @ModelAttribute("newDanhGia") DanhGia danhGia,
                                 Authentication authentication) {

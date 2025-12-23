@@ -1,14 +1,40 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<body>
-<h2>ĐƠN HÀNG CỦA TÔI</h2>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout/_LayoutUser :: layout(
+          'Đơn hàng của tôi',
+          ~{::content},
+          ~{}
+      )">
 
-<ul>
-    <li th:each="dh : ${listDonHang}">
-        <b th:text="${dh.maDonHang}"></b>
-        - <span th:text="${dh.trangThai}"></span>
-        - <span th:text="${dh.tongTien}"></span>
-    </li>
-</ul>
-</body>
+<th:block th:fragment="content">
+
+    <h1>Đơn hàng của tôi</h1>
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Mã đơn hàng</th>
+            <th>Ngày đặt</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái</th>
+            <th>Chi tiết</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="dh : ${listDonHang}">
+            <td th:text="${dh.maDonHang}"></td>
+            <td th:text="${#temporals.format(dh.ngayDat,'dd/MM/yyyy HH:mm')}"></td>
+            <td th:text="${#numbers.formatDecimal(dh.tongTien,0,'POINT',0,'COMMA')} + ' đ'"></td>
+            <td th:text="${dh.trangThai}"></td>
+            <td>
+                <a th:href="@{/donhang/{id}(id=${dh.id})}" class="btn btn-sm btn-primary">
+                    Xem chi tiết
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</th:block>
+
 </html>

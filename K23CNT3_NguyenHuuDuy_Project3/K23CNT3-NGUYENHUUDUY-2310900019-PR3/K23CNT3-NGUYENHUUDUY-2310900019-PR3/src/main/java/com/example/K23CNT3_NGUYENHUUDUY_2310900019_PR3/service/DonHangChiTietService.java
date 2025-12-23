@@ -11,13 +11,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DonHangChiTietService {
 
-    private final DonHangChiTietRepository repo;
+    private final DonHangChiTietRepository repository;
 
-    public List<DonHangChiTiet> findByDonHang(Long dhId) {
-        return repo.findByDonHang_Id(dhId);
+    public List<DonHangChiTiet> findByDonHangId(Long donHangId) {
+        return repository.findByDonHang_Id(donHangId);
     }
 
     public DonHangChiTiet save(DonHangChiTiet ct) {
-        return repo.save(ct);
+        return repository.save(ct);
     }
 }

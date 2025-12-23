@@ -2,7 +2,11 @@ package com.example.K23CNT3_NGUYENHUUDUY_2310900019_PR3.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -28,6 +32,7 @@ public class NguoiDung {
 
     private boolean kichHoat = true;
 
+    // ✅ ĐẶT ĐÚNG VỊ TRÍ
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "nguoi_dung_vai_tro",
@@ -35,4 +40,12 @@ public class NguoiDung {
             inverseJoinColumns = @JoinColumn(name = "vai_tro_id")
     )
     private Set<VaiTro> vaiTros;
+
+    // ✅ LẤY ROLE TỪ DATABASE
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return vaiTros.stream()
+                .map(vt -> new SimpleGrantedAuthority(vt.getTen()))
+                .toList();
+    }
 }
+

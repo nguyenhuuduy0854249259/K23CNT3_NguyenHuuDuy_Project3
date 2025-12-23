@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="layout/_LayoutUser :: layout(
           'Chi tiết sản phẩm',
           ~{::content},
@@ -10,30 +11,33 @@
 
     <h2>Chi tiết sản phẩm</h2>
 
-    <!-- ================= SẢN PHẨM ================= -->
-    <div th:if="${sp != null}">
+    <div th:if="${sp != null}" class="card p-3 mb-3">
 
-        <p><strong>ID:</strong> <span th:text="${sp.id}"></span></p>
+        <img th:src="${sp.hinhAnh != null && sp.hinhAnh != ''} ? @{/images/{img}(img=${sp.hinhAnh})} : @{/images/no-image.png}"
+             alt="Ảnh sản phẩm"
+             class="img-fluid mb-3"
+             style="max-height:300px; object-fit:cover">
 
-        <p><strong>Tên sản phẩm:</strong>
-            <span th:text="${sp.ten}"></span>
-        </p>
+        <h3 th:text="${sp.ten}"></h3>
+        <p class="text-danger fw-bold" th:text="${#numbers.formatDecimal(sp.gia,0,'POINT',0,'COMMA')} + ' đ'"></p>
+        <p><strong>Mô tả:</strong> <span th:text="${sp.moTa}"></span></p>
+        <p><strong>Danh mục:</strong> <span th:text="${sp.danhMuc != null ? sp.danhMuc.ten : 'Chưa phân loại'}"></span></p>
+        <p><strong>Thương hiệu:</strong> <span th:text="${sp.thuongHieu != null ? sp.thuongHieu.ten : 'Chưa có thương hiệu'}"></span></p>
 
-        <p><strong>Giá:</strong>
-            <span th:text="${#numbers.formatDecimal(sp.gia,0,'POINT',0,'COMMA')}"></span> đ
-        </p>
+        <!-- NÚT MUA NGAY -->
+        <sec:authorize access="isAuthenticated()">
+            <form th:action="@{/giohang/add}" method="post" class="mt-3">
+                <input type="hidden" name="productId" th:value="${sp.id}" />
+                <button type="submit" class="btn btn-success btn-sm">Mua ngay</button>
+            </form>
+        </sec:authorize>
 
-        <p><strong>Mô tả:</strong>
-            <span th:text="${sp.moTa}"></span>
-        </p>
+        <sec:authorize access="!isAuthenticated()">
+            <p class="text-warning mt-2">
+                Bạn cần <a th:href="@{/login}">đăng nhập</a> để mua sản phẩm.
+            </p>
+        </sec:authorize>
 
-        <p><strong>Danh mục:</strong>
-            <span th:text="${sp.danhMuc != null ? sp.danhMuc.ten : 'Chưa phân loại'}"></span>
-        </p>
-
-        <p><strong>Thương hiệu:</strong>
-            <span th:text="${sp.thuongHieu != null ? sp.thuongHieu.ten : 'Chưa có thương hiệu'}"></span>
-        </p>
     </div>
 
     <hr>
@@ -41,42 +45,27 @@
     <!-- ================= DANH GIÁ ================= -->
     <h4>Đánh giá sản phẩm</h4>
 
-    <!-- KHÔNG CÓ ĐÁNH GIÁ -->
     <div th:if="${listDanhGia == null || #lists.isEmpty(listDanhGia)}">
         <p class="text-muted">Chưa có đánh giá nào cho sản phẩm này.</p>
     </div>
 
-    <!-- CÓ ĐÁNH GIÁ -->
     <div th:each="dg : ${listDanhGia}" class="border rounded p-2 mb-2">
-
         <p class="mb-1">
             <strong th:text="${dg.nguoiDung != null ? dg.nguoiDung.username : 'Người dùng'}"></strong>
             -
             <span th:text="${dg.soSao}"></span> ⭐
         </p>
-
         <p th:text="${dg.binhLuan}"></p>
-
-        <small class="text-muted"
-               th:text="${#temporals.format(dg.thoiGian,'dd/MM/yyyy HH:mm')}">
-        </small>
+        <small class="text-muted" th:text="${#temporals.format(dg.thoiGian,'dd/MM/yyyy HH:mm')}"></small>
     </div>
 
-    <hr>
-
-    <!-- ================= FORM GỬI ĐÁNH GIÁ ================= -->
     <div sec:authorize="isAuthenticated()">
-
         <h5>Gửi đánh giá của bạn</h5>
-
-        <form th:action="@{/danh-gia/{id}(id=${sp.id})}"
-              method="post"
-              th:object="${newDanhGia}">
-
+        <form th:action="@{/sanpham/danhgia/{id}(id=${sp.id})}" method="post" th:object="${newDanhGia}">
             <div class="mb-2">
                 <label>Số sao</label>
                 <select class="form-select" th:field="*{soSao}" required>
-                    <option value="">-- Chọn --</option>
+                    <option th:value="null">-- Chọn --</option>
                     <option value="1">1 ⭐</option>
                     <option value="2">2 ⭐</option>
                     <option value="3">3 ⭐</option>
@@ -84,36 +73,23 @@
                     <option value="5">5 ⭐</option>
                 </select>
             </div>
-
             <div class="mb-2">
                 <label>Bình luận</label>
-                <textarea class="form-control"
-                          th:field="*{binhLuan}"
-                          rows="3"
-                          required></textarea>
+                <textarea class="form-control" th:field="*{binhLuan}" rows="3" required></textarea>
             </div>
-
-            <button class="btn btn-primary btn-sm">
-                Gửi đánh giá
-            </button>
+            <button class="btn btn-primary btn-sm">Gửi đánh giá</button>
         </form>
     </div>
 
-    <!-- CHƯA ĐĂNG NHẬP -->
     <div sec:authorize="!isAuthenticated()">
-        <p class="text-warning">
-            Bạn cần <a th:href="@{/login}">đăng nhập</a> để đánh giá sản phẩm.
-        </p>
+        <p class="text-warning">Bạn cần <a th:href="@{/login}">đăng nhập</a> để đánh giá sản phẩm.</p>
     </div>
 
     <hr>
 
     <div class="mt-3">
-        <a th:href="@{/sanpham}" class="btn btn-secondary">
-            ← Quay lại danh sách
-        </a>
+        <a th:href="@{/sanpham}" class="btn btn-secondary">← Quay lại danh sách</a>
     </div>
 
 </th:block>
-
 </html>

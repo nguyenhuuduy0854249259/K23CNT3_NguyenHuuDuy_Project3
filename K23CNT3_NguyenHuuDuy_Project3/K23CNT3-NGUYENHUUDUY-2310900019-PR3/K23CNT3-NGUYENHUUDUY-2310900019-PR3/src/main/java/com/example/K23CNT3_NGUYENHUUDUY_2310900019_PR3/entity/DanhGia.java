@@ -23,7 +23,7 @@ public class DanhGia {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int soSao;
+    private Integer  soSao;
 
     @Column(columnDefinition = "TEXT")
     private String binhLuan;

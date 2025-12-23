@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface DonHangRepository extends JpaRepository<DonHang, Long> {
 
-    List<DonHang> findByNguoiDung_Id(Long nguoiDungId);
+    List<DonHang> findByNguoiDungId(Long nguoiDungId);
 
     Optional<DonHang> findByMaDonHang(String maDonHang);
 }

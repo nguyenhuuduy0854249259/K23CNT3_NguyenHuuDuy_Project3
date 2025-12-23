@@ -24,7 +24,7 @@ public class DonHangChiTiet {
     @JoinColumn(name = "san_pham_id")
     private SanPham sanPham;
 
-    private int soLuong;
+    private Integer  soLuong;
     private double gia;
 }
 

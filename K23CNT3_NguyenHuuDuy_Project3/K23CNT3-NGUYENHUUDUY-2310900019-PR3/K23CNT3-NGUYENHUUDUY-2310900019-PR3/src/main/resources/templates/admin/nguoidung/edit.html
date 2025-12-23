@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/layout/header :: admin_head"></head>
+
+<body>
+<div th:replace="admin/layout/header :: admin_navbar"></div>
+
+<h2>Cập nhật người dùng</h2>
+
+<form th:action="@{/admin/nguoidung/edit/{id}(id=${user.id})}" method="post">
+
+    <label>Tên đăng nhập</label><br>
+    <input type="text" name="tenDangNhap"
+           th:value="${user.tenDangNhap}" readonly><br><br>
+
+    <label>Mật khẩu mới (để trống nếu không đổi)</label><br>
+    <input type="password" name="matKhau"><br><br>
+
+    <label>Email</label><br>
+    <input type="email" name="email"
+           th:value="${user.email}"><br><br>
+
+    <button type="submit">Cập nhật</button>
+</form>
+
+</body>
+</html>

@@ -1,19 +1,22 @@
-<h2>Thêm / sửa tin tức</h2>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout/header :: admin_head}"></head>
+<body>
+<div th:replace="~{admin/layout/header :: admin_navbar}"></div>
 
-<form th:action="@{/admin/tintuc/luu}"
-      th:object="${tinTuc}" method="post">
-
-    <input type="hidden" th:field="*{id}"/>
-
-    Tiêu đề:
-    <input type="text" th:field="*{tieuDe}" class="form-control"/>
-
-    Ảnh đại diện:
-    <input type="text" th:field="*{anhDaiDien}" class="form-control"/>
-
-    Nội dung:
-    <textarea th:field="*{noiDung}"
-              class="form-control" rows="6"></textarea>
-
+<h2>Thêm / Sửa tin tức</h2>
+<form th:action="@{/admin/tintuc/luu}" th:object="${tinTuc}" method="post">
+    <input type="hidden" th:field="*{id}" />
+    <div>
+        Tiêu đề: <input type="text" th:field="*{tieuDe}" class="form-control"/>
+    </div>
+    <div>
+        Ảnh đại diện: <input type="text" th:field="*{anhDaiDien}" class="form-control"/>
+    </div>
+    <div>
+        Nội dung: <textarea th:field="*{noiDung}" class="form-control" rows="6"></textarea>
+    </div>
     <button class="btn btn-success mt-2">Lưu</button>
 </form>
+</body>
+</html>

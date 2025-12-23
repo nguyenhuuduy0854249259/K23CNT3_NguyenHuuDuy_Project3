@@ -8,60 +8,59 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/admin/tin-tuc")
+@RequestMapping("/admin/tintuc")
 @RequiredArgsConstructor
 public class TinTucController {
 
     private final TinTucService tinTucService;
 
-    // =========================================
     // 1. Danh sách tin tức
-    // =========================================
     @GetMapping
     public String list(Model model) {
         model.addAttribute("dsTinTuc", tinTucService.findAll());
         return "admin/tintuc/list"; // list.html
     }
 
-    // =========================================
     // 2. Form thêm mới
-    // =========================================
     @GetMapping("/add")
     public String addForm(Model model) {
         model.addAttribute("tinTuc", new TinTuc());
-        return "admin/tintuc/add"; // add.html
+        return "admin/tintuc/form"; // dùng form.html
     }
 
     @PostMapping("/add")
     public String add(@ModelAttribute TinTuc tinTuc) {
         tinTucService.save(tinTuc);
-        return "redirect:/admin/tin-tuc";
+        return "redirect:/admin/tintuc";
     }
 
-    // =========================================
+    @PostMapping("/luu")
+    public String save(@ModelAttribute TinTuc tinTuc) {
+        tinTucService.save(tinTuc);
+        return "redirect:/admin/tintuc";
+    }
+
+
     // 3. Form chỉnh sửa
-    // =========================================
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable Long id, Model model) {
         TinTuc t = tinTucService.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy tin tức"));
         model.addAttribute("tinTuc", t);
-        return "admin/tintuc/edit"; // edit.html
+        return "admin/tintuc/form"; // dùng form.html
     }
 
     @PostMapping("/edit/{id}")
     public String edit(@PathVariable Long id, @ModelAttribute TinTuc tinTuc) {
         tinTuc.setId(id);
         tinTucService.save(tinTuc);
-        return "redirect:/admin/tin-tuc";
+        return "redirect:/admin/tintuc";
     }
 
-    // =========================================
     // 4. Xóa tin tức
-    // =========================================
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
         tinTucService.delete(id);
-        return "redirect:/admin/tin-tuc";
+        return "redirect:/admin/tintuc";
     }
 }

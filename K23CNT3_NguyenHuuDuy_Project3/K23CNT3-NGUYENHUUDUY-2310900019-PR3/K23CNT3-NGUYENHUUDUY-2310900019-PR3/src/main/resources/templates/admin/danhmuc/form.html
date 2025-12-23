@@ -1,29 +1,142 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{admin/layout/header :: admin_head}"></head>
+
 <body>
-<h2>THÊM / SỬA DANH MỤC</h2>
 
-<form th:action="@{/admin/danh-muc/luu}" th:object="${danhMuc}" method="post">
-    <input type="hidden" th:field="*{id}"/>
+<!-- CSS đặt trong BODY do head bị replace -->
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f6f9;
+    }
 
-    Tên danh mục:
-    <input type="text" th:field="*{ten}" required/><br/><br/>
+    .container-fluid {
+        margin-top: 20px;
+    }
 
-    Mô tả:
-    <textarea th:field="*{moTa}"></textarea><br/><br/>
+    .card {
+        max-width: 600px;
+        margin: auto;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
 
-    Danh mục cha:
-    <select th:field="*{parent}">
-        <option th:value="">-- Không có --</option>
-        <option th:each="dm : ${listDanhMuc}"
-                th:value="${dm}"
-                th:text="${dm.ten}">
-        </option>
-    </select><br/><br/>
+    .card-header {
+        background-color: #007bff;
+        color: #fff;
+        padding: 15px 20px;
+        font-size: 18px;
+        font-weight: bold;
+    }
 
-    <button type="submit">Lưu</button>
-</form>
+    .card-body {
+        padding: 20px;
+    }
 
-<a th:href="@{/admin/danh-muc}">← Quay lại</a>
+    label {
+        font-weight: bold;
+        color: #444;
+    }
+
+    input[type="text"],
+    textarea,
+    select {
+        width: 100%;
+        padding: 8px 10px;
+        margin-top: 6px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+    }
+
+    textarea {
+        resize: vertical;
+    }
+
+    .btn-save {
+        width: 100%;
+        padding: 10px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 15px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    .btn-save:hover {
+        background-color: #218838;
+    }
+
+    .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 15px;
+        color: #007bff;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div th:replace="~{admin/layout/header :: admin_navbar}"></div>
+
+<div class="container-fluid">
+
+    <div class="card">
+        <div class="card-header">
+            THÊM / SỬA DANH MỤC
+        </div>
+
+        <div class="card-body">
+            <form th:action="@{/admin/danhmuc/luu}"
+                  th:object="${dm}"
+                  method="post">
+
+                <input type="hidden" th:field="*{id}"/>
+
+                <div>
+                    <label>Tên danh mục:</label>
+                    <input type="text" th:field="*{ten}" required/>
+                </div>
+                <br/>
+
+                <div>
+                    <label>Mô tả:</label>
+                    <textarea th:field="*{moTa}" rows="4"></textarea>
+                </div>
+                <br/>
+
+                <div>
+                    <label>Danh mục cha:</label>
+                    <select th:field="*{parent.id}">
+                        <option value="">-- Không có --</option>
+                        <option th:each="p : ${listDanhMuc}"
+                                th:value="${p.id}"
+                                th:text="${p.ten}"
+                                th:if="${dm.id == null || p.id != dm.id}">
+                        </option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-save">💾 Lưu</button>
+            </form>
+
+            <a th:href="@{/admin/danhmuc}" class="back-link">
+                ← Quay lại danh sách
+            </a>
+        </div>
+    </div>
+
+</div>
+
 </body>
 </html>

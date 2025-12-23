@@ -1,9 +1,11 @@
 package com.example.K23CNT3_NGUYENHUUDUY_2310900019_PR3.Controller.Admin;
 
+
 import com.example.K23CNT3_NGUYENHUUDUY_2310900019_PR3.entity.NguoiDung;
 import com.example.K23CNT3_NGUYENHUUDUY_2310900019_PR3.service.NguoiDungService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class AdminNguoiDungController {
 
     private final NguoiDungService nguoiDungService;
+    private final PasswordEncoder passwordEncoder;
 
     // =========================
     // DANH SÁCH
@@ -36,6 +39,10 @@ public class AdminNguoiDungController {
 
     @PostMapping("/create")
     public String create(@ModelAttribute("user") NguoiDung user) {
+
+        // encode password (BẮT BUỘC)
+        user.setMatKhau(passwordEncoder.encode(user.getMatKhau()));
+
         nguoiDungService.save(user);
         return "redirect:/admin/nguoidung";
     }
@@ -57,15 +64,26 @@ public class AdminNguoiDungController {
     public String update(@PathVariable Long id,
                          @ModelAttribute("user") NguoiDung user) {
 
+        NguoiDung oldUser = nguoiDungService.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         user.setId(id);
+
+        // nếu không nhập mật khẩu mới → giữ mật khẩu cũ
+        if (user.getMatKhau() == null || user.getMatKhau().isBlank()) {
+            user.setMatKhau(oldUser.getMatKhau());
+        } else {
+            user.setMatKhau(passwordEncoder.encode(user.getMatKhau()));
+        }
+
         nguoiDungService.save(user);
         return "redirect:/admin/nguoidung";
     }
 
     // =========================
-    // XOÁ
+    // XOÁ (POST – KHÔNG DÙNG GET)
     // =========================
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
         nguoiDungService.delete(id);
         return "redirect:/admin/nguoidung";

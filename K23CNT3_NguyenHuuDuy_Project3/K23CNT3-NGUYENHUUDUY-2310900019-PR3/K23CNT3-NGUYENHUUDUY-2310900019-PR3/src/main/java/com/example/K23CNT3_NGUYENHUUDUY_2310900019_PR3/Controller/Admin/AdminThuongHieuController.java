@@ -10,7 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/admin/thuong-hieu")
+@RequestMapping("/admin/thuonghieu")
 @RequiredArgsConstructor
 public class AdminThuongHieuController {
 
@@ -37,7 +37,7 @@ public class AdminThuongHieuController {
     @PostMapping("/add")
     public String add(@ModelAttribute ThuongHieu thuongHieu) {
         thuongHieuService.save(thuongHieu);
-        return "redirect:/admin/thuong-hieu";
+        return "redirect:/admin/thuonghieu";
     }
 
     // ============================
@@ -59,7 +59,7 @@ public class AdminThuongHieuController {
         thuongHieu.setId(id);
         thuongHieuService.save(thuongHieu);
 
-        return "redirect:/admin/thuong-hieu";
+        return "redirect:/admin/thuonghieu";
     }
 
     // ============================
@@ -68,6 +68,6 @@ public class AdminThuongHieuController {
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
         thuongHieuService.delete(id);
-        return "redirect:/admin/thuong-hieu";
+        return "redirect:/admin/thuonghieu";
     }
 }

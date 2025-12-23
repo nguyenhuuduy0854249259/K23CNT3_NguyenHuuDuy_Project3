@@ -1,32 +1,174 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{admin/layout/header :: admin_head}"></head>
+
+<style>
+    body {
+        background-color: #f4f6f9;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    h2 {
+        margin: 20px 0;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+
+    .form-container {
+        max-width: 700px;
+        background: #fff;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    label {
+        font-weight: 600;
+        margin-top: 12px;
+        display: block;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    input[type="file"] {
+        width: 100%;
+        padding: 8px 10px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+
+    textarea {
+        resize: vertical;
+    }
+
+    .image-preview {
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    .image-preview img {
+        max-width: 200px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+    }
+
+    .form-actions {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-save {
+        background: linear-gradient(135deg, #28a745, #1e7e34);
+        color: #fff;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .btn-cancel {
+        background: #6c757d;
+        color: #fff;
+        padding: 8px 18px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .btn-save:hover,
+    .btn-cancel:hover {
+        opacity: 0.9;
+    }
+</style>
+
 <body>
-<h2>THÊM / SỬA SẢN PHẨM</h2>
 
-<form th:action="@{/admin/san-pham/luu}" th:object="${sanPham}" method="post">
-    <input type="hidden" th:field="*{id}"/>
+<div th:replace="~{admin/layout/header :: admin_navbar}"></div>
 
-    Tên:
-    <input type="text" th:field="*{ten}"/><br/>
+<div class="container-fluid mt-3">
+    <h2 th:text="${title}"></h2>
 
-    Giá:
-    <input type="number" th:field="*{gia}"/><br/>
+    <div class="form-container">
 
-    Số lượng tồn:
-    <input type="number" th:field="*{soLuongTon}"/><br/>
+        <form th:action="@{${action}}"
+              method="post"
+              enctype="multipart/form-data">
 
-    Mô tả:
-    <textarea th:field="*{moTa}"></textarea><br/>
+            <!-- Tên -->
+            <label>Tên sản phẩm</label>
+            <input type="text" name="ten"
+                   th:value="${sp.ten}" required>
 
-    Danh mục:
-    <select th:field="*{danhMuc}">
-        <option th:each="dm : ${listDanhMuc}"
-                th:value="${dm}"
-                th:text="${dm.ten}">
-        </option>
-    </select><br/>
+            <!-- Giá -->
+            <label>Giá</label>
+            <input type="number" name="gia"
+                   th:value="${sp.gia}" required>
 
-    <button type="submit">Lưu</button>
-</form>
+            <!-- Số lượng -->
+            <label>Số lượng tồn</label>
+            <input type="number" name="soLuongTon"
+                   th:value="${sp.soLuongTon}" required>
+
+            <!-- Mô tả -->
+            <label>Mô tả</label>
+            <textarea name="moTa" rows="4"
+                      th:text="${sp.moTa}"></textarea>
+
+            <!-- Upload ảnh -->
+            <label>Hình ảnh sản phẩm</label>
+            <input type="file"
+                   name="file"
+                   accept="image/*"
+                   onchange="previewImage(this)">
+
+            <!-- Ảnh hiện tại -->
+            <div class="image-preview" th:if="${sp.hinhAnh != null}">
+                <p class="text-muted">Ảnh hiện tại</p>
+                <img th:src="@{'/uploads/' + ${sp.hinhAnh}}">
+                <input type="hidden" name="hinhAnh"
+                       th:value="${sp.hinhAnh}">
+            </div>
+
+            <!-- Preview ảnh mới -->
+            <div class="image-preview" id="previewBox" style="display:none">
+                <p class="text-muted">Ảnh mới</p>
+                <img id="previewImg">
+            </div>
+
+            <!-- Actions -->
+            <div class="form-actions">
+                <button type="submit" class="btn-save">
+                    💾 Lưu
+                </button>
+                <a th:href="@{/admin/sanpham/list}"
+                   class="btn-cancel">
+                    Huỷ
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<script>
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('previewImg').src = e.target.result;
+                document.getElementById('previewBox').style.display = 'block';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+
 </body>
 </html>

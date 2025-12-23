@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Đặt hàng thành công</title>
+
+    <!-- Bootstrap (nếu project đã có) -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+
+    <style>
+        body {
+            background: linear-gradient(120deg, #4facfe, #00f2fe);
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .success-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 15px;
+        }
+
+        .success-card {
+            background: #fff;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 900px;
+            padding: 40px;
+            position: relative;
+            box-shadow: 0 15px 40px rgba(0,0,0,.2);
+            overflow: hidden;
+        }
+
+        /* ===== ICON ===== */
+        .success-icon-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .success-circle {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: #e6f9f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .checkmark-svg {
+            width: 70px;
+            height: 70px;
+            stroke: #28a745;
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .checkmark-circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            animation: circle 0.6s ease-in-out forwards;
+        }
+
+        .checkmark-check {
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: check 0.4s ease-in-out 0.6s forwards;
+        }
+
+        @keyframes circle {
+            to { stroke-dashoffset: 0; }
+        }
+
+        @keyframes check {
+            to { stroke-dashoffset: 0; }
+        }
+
+        /* ===== CONTENT ===== */
+        .success-content {
+            text-align: center;
+        }
+
+        .success-title {
+            color: #28a745;
+            font-size: 34px;
+            margin-bottom: 10px;
+        }
+
+        .success-subtitle {
+            color: #666;
+            font-size: 17px;
+            margin-bottom: 30px;
+        }
+
+        /* ===== ORDER INFO ===== */
+        .order-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .info-item {
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-icon {
+            font-size: 26px;
+        }
+
+        .info-label {
+            font-size: 13px;
+            color: #999;
+            display: block;
+        }
+
+        .info-value {
+            font-weight: bold;
+        }
+
+        /* ===== TIMELINE ===== */
+        .order-timeline {
+            margin-top: 35px;
+            text-align: left;
+        }
+
+        .timeline-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .timeline-step {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: .4s;
+        }
+
+        .timeline-step.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .step-dot {
+            width: 14px;
+            height: 14px;
+            background: #ccc;
+            border-radius: 50%;
+            margin-top: 5px;
+        }
+
+        .timeline-step.active .step-dot {
+            background: #28a745;
+        }
+
+        /* ===== NOTIFICATION ===== */
+        .notification-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin: 30px 0;
+        }
+
+        /* ===== BUTTONS ===== */
+        .success-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: #fff;
+        }
+
+        .btn-action:hover {
+            opacity: .9;
+        }
+
+        /* ===== CONFETTI ===== */
+        .confetti-container {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: hsl(calc(var(--i) * 36), 80%, 60%);
+            top: -10px;
+            left: calc(var(--i) * 10%);
+            animation: fall 3s linear infinite;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="success-container">
+    <div class="success-card">
+
+        <div class="success-icon-wrapper">
+            <div class="success-circle">
+                <svg class="checkmark-svg" viewBox="0 0 52 52">
+                    <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                    <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="success-content">
+            <h1 class="success-title">Đặt hàng thành công!</h1>
+            <p class="success-subtitle">
+                Cảm ơn bạn đã đặt hàng tại cửa hàng của chúng tôi
+            </p>
+
+            <div class="order-info">
+                <div class="info-item">
+                    <div class="info-icon">📦</div>
+                    <div>
+                        <span class="info-label">Trạng thái</span>
+                        <span class="info-value">Đang xử lý</span>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">🚚</div>
+                    <div>
+                        <span class="info-label">Giao hàng</span>
+                        <span class="info-value">15–30 phút</span>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">💳</div>
+                    <div>
+                        <span class="info-label">Thanh toán</span>
+                        <span class="info-value">COD</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="order-timeline">
+                <div class="timeline-step active">
+                    <div class="step-dot"></div>
+                    <div>
+                        <strong>Đang xác nhận</strong><br>
+                        <small>Xác nhận đơn hàng</small>
+                    </div>
+                </div>
+                <div class="timeline-step">
+                    <div class="step-dot"></div>
+                    <div>
+                        <strong>Đang chuẩn bị</strong><br>
+                        <small>Chuẩn bị đơn</small>
+                    </div>
+                </div>
+                <div class="timeline-step">
+                    <div class="step-dot"></div>
+                    <div>
+                        <strong>Đang giao</strong><br>
+                        <small>Shipper đang đến</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="notification-box">
+                📱 Chúng tôi sẽ gọi xác nhận đơn hàng cho bạn
+            </div>
+
+            <div class="success-actions">
+                <a th:href="@{/}" class="btn-action btn-primary">🏠 Trang chủ</a>
+                <a th:href="@{/donhang/list}" class="btn-action btn-secondary">📋 Đơn hàng</a>
+            </div>
+        </div>
+
+        <div class="confetti-container">
+            <div class="confetti" style="--i:1"></div>
+            <div class="confetti" style="--i:2"></div>
+            <div class="confetti" style="--i:3"></div>
+            <div class="confetti" style="--i:4"></div>
+            <div class="confetti" style="--i:5"></div>
+            <div class="confetti" style="--i:6"></div>
+            <div class="confetti" style="--i:7"></div>
+            <div class="confetti" style="--i:8"></div>
+            <div class="confetti" style="--i:9"></div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const steps = document.querySelectorAll('.timeline-step');
+        steps.forEach((step, index) => {
+            setTimeout(() => {
+                step.classList.add('active');
+            }, 800 + index * 400);
+        });
+    });
+</script>
+
+</body>
+</html>

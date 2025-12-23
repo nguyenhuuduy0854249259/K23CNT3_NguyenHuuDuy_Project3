@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/layout/header :: admin_head"></head>
+
+<body>
+<div th:replace="admin/layout/header :: admin_navbar"></div>
+
+<h2>Chi tiết người dùng</h2>
+
+<p><b>ID:</b> <span th:text="${user.id}"></span></p>
+<p><b>Tên đăng nhập:</b> <span th:text="${user.tenDangNhap}"></span></p>
+<p><b>Email:</b> <span th:text="${user.email}"></span></p>
+<p><b>Vai trò:</b> <span th:text="${user.vaiTros}"></span></p>
+
+<a th:href="@{/admin/nguoidung}">← Quay lại</a>
+
+</body>
+</html>

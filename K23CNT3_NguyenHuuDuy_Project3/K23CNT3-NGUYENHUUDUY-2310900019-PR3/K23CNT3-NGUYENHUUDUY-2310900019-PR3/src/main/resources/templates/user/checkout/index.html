@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thanh toán</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+
+    <style>
+        body {
+            background: linear-gradient(120deg, #f0f4ff, #e9f7ff);
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        .checkout-container {
+            min-height: 100vh;
+        }
+
+        /* ===== HEADER ===== */
+        .checkout-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .checkout-title {
+            font-weight: 700;
+            color: #0d6efd;
+            margin-bottom: 20px;
+        }
+
+        .title-icon {
+            font-size: 30px;
+            margin-right: 8px;
+        }
+
+        /* ===== STEPS ===== */
+        .checkout-steps {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .step {
+            text-align: center;
+            font-size: 14px;
+            color: #999;
+        }
+
+        .step-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #dee2e6;
+            color: #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 5px;
+            font-weight: bold;
+        }
+
+        .step.active .step-icon {
+            background: #0d6efd;
+            color: #fff;
+        }
+
+        .step.completed .step-icon {
+            background: #198754;
+            color: #fff;
+        }
+
+        .step-line {
+            width: 50px;
+            height: 2px;
+            background: #dee2e6;
+        }
+
+        /* ===== CARD ===== */
+        .card {
+            border-radius: 14px;
+            border: none;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        h5 {
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        /* ===== FORM ===== */
+        label {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            padding: 10px 14px;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 0.2rem rgba(13,110,253,.15);
+        }
+
+        textarea.form-control {
+            resize: none;
+        }
+
+        /* ===== PAYMENT ===== */
+        .form-check {
+            margin-top: 10px;
+        }
+
+        .form-check-label {
+            cursor: pointer;
+        }
+
+        /* ===== ORDER ITEMS ===== */
+        .order-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .order-item img {
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        /* ===== TOTAL ===== */
+        .fw-bold span {
+            color: #dc3545;
+            font-size: 18px;
+        }
+
+        /* ===== BUTTON ===== */
+        .btn-success {
+            border-radius: 30px;
+            padding: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            background: linear-gradient(120deg, #28a745, #20c997);
+            border: none;
+        }
+
+        .btn-success:hover {
+            opacity: 0.9;
+        }
+
+        /* ===== ALERT ===== */
+        .alert {
+            border-radius: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .checkout-steps {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="checkout-container">
+    <div class="container py-5">
+
+        <!-- HEADER -->
+        <div class="checkout-header">
+            <h2 class="checkout-title">
+                <span class="title-icon">💳</span>
+                Thanh toán đơn hàng
+            </h2>
+            <div class="checkout-steps">
+                <div class="step completed">
+                    <div class="step-icon">✓</div>
+                    <span>Giỏ hàng</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step active">
+                    <div class="step-icon">2</div>
+                    <span>Thanh toán</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step">
+                    <div class="step-icon">3</div>
+                    <span>Hoàn tất</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ERROR -->
+        <div th:if="${error}" class="alert alert-danger">
+            <strong>Có lỗi xảy ra!</strong>
+            <p th:text="${error}"></p>
+        </div>
+
+        <form th:action="@{/checkout}" method="post">
+            <div class="row g-4">
+
+                <!-- SHIPPING INFO -->
+                <div class="col-lg-7">
+                    <div class="card p-4">
+                        <h5>Thông tin giao hàng</h5>
+
+                        <div class="mb-3">
+                            <label>Họ và tên</label>
+                            <input type="text"
+                                   class="form-control"
+                                   th:value="${loggedUser != null ? loggedUser.ten : ''}"
+                                   readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Email</label>
+                            <input type="email"
+                                   class="form-control"
+                                   th:value="${loggedUser != null ? loggedUser.email : ''}"
+                                   readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Số điện thoại *</label>
+                            <input type="tel"
+                                   name="sdt"
+                                   class="form-control"
+                                   th:value="${loggedUser != null ? loggedUser.sdt : ''}"
+                                   required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Địa chỉ giao hàng *</label>
+                            <textarea name="diaChi"
+                                      class="form-control"
+                                      rows="3"
+                                      required
+                                      th:text="${loggedUser != null ? loggedUser.diaChi : ''}">
+                            </textarea>
+                        </div>
+
+                        <hr>
+
+                        <h6>Phương thức thanh toán</h6>
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="radio"
+                                   name="phuongThuc"
+                                   value="COD"
+                                   checked>
+                            <label class="form-check-label">
+                                Thanh toán khi nhận hàng (COD)
+                            </label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="radio"
+                                   name="phuongThuc"
+                                   value="ONLINE">
+                            <label class="form-check-label">
+                                Thanh toán Online
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ORDER -->
+                <div class="col-lg-5">
+                    <div class="card p-4">
+                        <h5>Đơn hàng của bạn</h5>
+
+                        <div th:each="item : ${cartItems}" class="order-item d-flex align-items-center mb-2">
+                            <img th:src="${item.key.hinhAnh[0]}" width="60">
+                            <div class="flex-grow-1 ms-2">
+                                <strong th:text="${item.key.ten}"></strong><br>
+                                x<span th:text="${item.value}"></span>
+                            </div>
+                            <div>
+                                <span th:text="${#numbers.formatDecimal(item.key.gia * item.value, 0, 'COMMA', 0, 'POINT')}"></span>₫
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between">
+                            <span>Tạm tính</span>
+                            <span th:text="${#numbers.formatDecimal(tongTien,0,'COMMA',0,'POINT')}"></span>₫
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <span>Phí vận chuyển</span>
+                            <span class="text-success">Miễn phí</span>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between fw-bold">
+                            <span>Tổng cộng</span>
+                            <span th:text="${#numbers.formatDecimal(tongTien,0,'COMMA',0,'POINT')}"></span>₫
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100 mt-4">
+                            Đặt hàng ngay
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+
+</html>

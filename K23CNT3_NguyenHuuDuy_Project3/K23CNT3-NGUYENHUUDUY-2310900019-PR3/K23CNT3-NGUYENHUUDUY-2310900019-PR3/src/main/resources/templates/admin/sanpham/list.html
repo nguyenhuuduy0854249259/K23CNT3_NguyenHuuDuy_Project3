@@ -1,29 +1,174 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{admin/layout/header :: admin_head}"></head>
+
+<style>
+    body {
+        background-color: #f4f6f9;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    h2 {
+        font-weight: 700;
+        margin: 20px 0;
+        color: #2c3e50;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .btn-add {
+        background: linear-gradient(135deg, #4e73df, #224abe);
+        color: #fff;
+        padding: 8px 14px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .btn-add:hover {
+        opacity: 0.9;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    }
+
+    thead {
+        background-color: #343a40;
+        color: #fff;
+    }
+
+    th, td {
+        padding: 12px 10px;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    tbody tr:nth-child(even) {
+        background-color: #f8f9fc;
+    }
+
+    tbody tr:hover {
+        background-color: #eef1f7;
+    }
+
+    img {
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+    }
+
+    .action a {
+        padding: 5px 10px;
+        font-size: 13px;
+        text-decoration: none;
+        border-radius: 4px;
+        margin: 0 3px;
+    }
+
+    .btn-edit {
+        background-color: #ffc107;
+        color: #000;
+    }
+
+    .btn-delete {
+        background-color: #dc3545;
+        color: #fff;
+    }
+
+    .btn-edit:hover,
+    .btn-delete:hover {
+        opacity: 0.85;
+    }
+
+    .empty {
+        text-align: center;
+        color: #888;
+        padding: 20px;
+        font-style: italic;
+    }
+</style>
+
 <body>
-<h2>QUẢN LÝ SẢN PHẨM</h2>
 
-<a th:href="@{/admin/san-pham/them}">+ Thêm sản phẩm</a>
+<div th:replace="~{admin/layout/header :: admin_navbar}"></div>
 
-<table border="1">
-    <tr>
-        <th>Tên</th>
-        <th>Giá</th>
-        <th>Tồn kho</th>
-        <th>Danh mục</th>
-        <th>Hành động</th>
-    </tr>
+<div class="container-fluid mt-3">
 
-    <tr th:each="sp : ${listSanPham}">
-        <td th:text="${sp.ten}"></td>
-        <td th:text="${sp.gia}"></td>
-        <td th:text="${sp.soLuongTon}"></td>
-        <td th:text="${sp.danhMuc != null ? sp.danhMuc.ten : ''}"></td>
-        <td>
-            <a th:href="@{/admin/san-pham/sua/{id}(id=${sp.id})}">Sửa</a> |
-            <a th:href="@{/admin/san-pham/xoa/{id}(id=${sp.id})}">Xóa</a>
-        </td>
-    </tr>
-</table>
+    <div class="page-header">
+        <h2>Danh sách sản phẩm</h2>
+        <a th:href="@{/admin/sanpham/create}" class="btn-add">
+            ➕ Thêm sản phẩm
+        </a>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên</th>
+            <th>Mô tả</th>
+            <th>Hình ảnh</th>
+            <th>Giá</th>
+            <th>Tồn kho</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="sp : ${list}">
+            <td th:text="${sp.id}"></td>
+            <td th:text="${sp.ten}"></td>
+            <td th:text="${sp.moTa}"></td>
+
+            <td>
+                <img th:if="${sp.hinhAnh != null}"
+                     th:src="@{'/uploads/' + ${sp.hinhAnh}}"
+                     alt="Ảnh sản phẩm">
+            </td>
+
+            <td th:text="${#numbers.formatDecimal(sp.gia,0,'POINT',0,'COMMA')} + ' đ'"></td>
+
+            <td th:text="${sp.soLuongTon}"></td>
+
+            <td class="action">
+                <a th:href="@{/admin/sanpham/edit/{id}(id=${sp.id})}"
+                   class="btn-edit">Sửa</a>
+                <a th:href="@{/admin/sanpham/delete/{id}(id=${sp.id})}"
+                   class="btn-delete"
+                   onclick="return confirmDelete()">Xoá</a>
+            </td>
+        </tr>
+
+        <tr th:if="${list == null || #lists.isEmpty(list)}">
+            <td colspan="7" class="empty">
+                Chưa có sản phẩm nào
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<script>
+    function confirmDelete() {
+        return confirm("Bạn có chắc chắn muốn xoá sản phẩm này?");
+    }
+</script>
+
 </body>
 </html>

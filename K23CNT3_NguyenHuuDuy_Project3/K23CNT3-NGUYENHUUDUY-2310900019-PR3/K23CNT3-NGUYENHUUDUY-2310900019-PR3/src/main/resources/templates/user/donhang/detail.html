@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết đơn hàng</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+
+<div class="container py-4">
+
+    <h3 class="mb-4">Chi tiết đơn hàng</h3>
+
+    <!-- THÔNG TIN ĐƠN HÀNG -->
+    <div class="card mb-4">
+        <div class="card-header fw-bold">
+            Thông tin đơn hàng
+        </div>
+        <div class="card-body">
+            <p><strong>Mã đơn hàng:</strong>
+                <span th:text="${donHang.maDonHang}"></span>
+            </p>
+
+            <p><strong>Ngày đặt:</strong>
+                <span th:text="${#temporals.format(donHang.ngayDat,'dd/MM/yyyy HH:mm')}"></span>
+            </p>
+
+            <p><strong>Trạng thái:</strong>
+                <span class="badge bg-info"
+                      th:text="${donHang.trangThai}">
+                </span>
+            </p>
+
+            <p><strong>Phương thức thanh toán:</strong>
+                <span th:text="${donHang.phuongThucThanhToan}"></span>
+            </p>
+
+            <p><strong>Địa chỉ giao hàng:</strong><br>
+                <span th:text="${donHang.diaChiGiaoHang}"></span>
+            </p>
+        </div>
+    </div>
+
+    <!-- DANH SÁCH SẢN PHẨM -->
+    <div class="card mb-4">
+        <div class="card-header fw-bold">
+            Sản phẩm trong đơn hàng
+        </div>
+
+        <div class="card-body p-0">
+            <table class="table table-bordered mb-0">
+                <thead class="table-light">
+                <tr>
+                    <th>Hình ảnh</th>
+                    <th>Sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Thành tiền</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="ct : ${chiTietList}">
+                    <td width="100">
+                        <img th:src="${ct.sanPham.hinhAnh}"
+                             class="img-fluid">
+                    </td>
+                    <td th:text="${ct.sanPham.ten}"></td>
+                    <td th:text="${#numbers.formatDecimal(ct.gia,0,'COMMA',0,'POINT')} + ' ₫'"></td>
+                    <td th:text="${ct.soLuong}"></td>
+                    <td th:text="${#numbers.formatDecimal(ct.gia * ct.soLuong,0,'COMMA',0,'POINT')} + ' ₫'"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- TỔNG TIỀN -->
+    <div class="card mb-4">
+        <div class="card-body text-end">
+            <h5>
+                Tổng tiền:
+                <span class="text-danger"
+                      th:text="${#numbers.formatDecimal(donHang.tongTien,0,'COMMA',0,'POINT')} + ' ₫'">
+                </span>
+            </h5>
+        </div>
+    </div>
+
+    <!-- NÚT -->
+    <div class="d-flex gap-2">
+        <a th:href="@{/donhang}" class="btn btn-secondary">
+            Quay lại danh sách
+        </a>
+
+        <form th:if="${donHang.trangThai == 'CHO_XU_LY'}"
+              th:action="@{/donhang/huy/{ma}(ma=${donHang.maDonHang})}"
+              method="post"
+              onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng?')">
+
+            <button type="submit" class="btn btn-danger">
+                Hủy đơn hàng
+            </button>
+        </form>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -9,27 +9,27 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
     private final NguoiDungService nguoiDungService;
     private final PasswordEncoder passwordEncoder;
 
-    // Trang login
-    @GetMapping("/login") // <-- sửa ở đây (không phải /auth/login nữa)
+    // ===== LOGIN PAGE =====
+    @GetMapping("/auth/login")
     public String loginPage() {
-        return "user/auth/login"; // resources/templates/user/auth/login.html
+        return "user/auth/login";
     }
 
-    // Trang register
-    @GetMapping("/register")
+    // ===== REGISTER PAGE =====
+    @GetMapping("/auth/register")
     public String registerPage(Model model) {
         model.addAttribute("user", new NguoiDung());
         return "user/auth/register";
     }
 
-    @PostMapping("/register")
+    // ===== SUBMIT REGISTER =====
+    @PostMapping("/auth/register")
     public String submitRegister(@ModelAttribute("user") NguoiDung user) {
         user.setMatKhau(passwordEncoder.encode(user.getMatKhau()));
         nguoiDungService.save(user);

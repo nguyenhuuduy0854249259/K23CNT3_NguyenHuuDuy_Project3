@@ -16,9 +16,10 @@ public class HomeController {
     @GetMapping({"", "/", "/home"})
     public String home(Model model) {
 
-        // Lấy toàn bộ sản phẩm từ DB
-        model.addAttribute("listSanPham", sanPhamRepository.findAll());
+//        // Lấy toàn bộ sản phẩm từ DB
+//        model.addAttribute("listSanPham", sanPhamRepository.findAll());
 
         return "user/home";
     }
+
 }

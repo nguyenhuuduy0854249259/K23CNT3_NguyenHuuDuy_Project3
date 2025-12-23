@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/layout/header :: admin_head"></head>
+
+<body>
+<div th:replace="admin/layout/header :: admin_navbar"></div>
+
+<h2>Quản lý người dùng</h2>
+
+<a th:href="@{/admin/nguoidung/create}">+ Thêm người dùng</a>
+
+<table border="1" cellpadding="8" cellspacing="0">
+    <tr>
+        <th>ID</th>
+        <th>Tên đăng nhập</th>
+        <th>Email</th>
+        <th>Vai trò</th>
+        <th>Hành động</th>
+    </tr>
+
+    <tr th:each="u : ${list}">
+        <td th:text="${u.id}"></td>
+        <td th:text="${u.tenDangNhap}"></td>
+        <td th:text="${u.email}"></td>
+        <td th:text="${u.vaiTros}"></td>
+        <td>
+            <a th:href="@{/admin/nguoidung/{id}(id=${u.id})}">Xem</a> |
+            <a th:href="@{/admin/nguoidung/edit/{id}(id=${u.id})}">Sửa</a> |
+            <form th:action="@{/admin/nguoidung/delete/{id}(id=${u.id})}"
+                  method="post" style="display:inline">
+                <button type="submit">Xoá</button>
+            </form>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

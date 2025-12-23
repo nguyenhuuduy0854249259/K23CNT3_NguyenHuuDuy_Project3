@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/layout/header :: admin_head"></head>
+
+<body>
+<div th:replace="admin/layout/header :: admin_navbar"></div>
+
+<h2>Thêm người dùng</h2>
+
+<form th:action="@{/admin/nguoidung/create}" method="post">
+
+    <label>Tên đăng nhập</label><br>
+    <input type="text" name="tenDangNhap" required><br><br>
+
+    <label>Mật khẩu</label><br>
+    <input type="password" name="matKhau" required><br><br>
+
+    <label>Email</label><br>
+    <input type="email" name="email"><br><br>
+
+    <button type="submit">Lưu</button>
+</form>
+
+</body>
+</html>

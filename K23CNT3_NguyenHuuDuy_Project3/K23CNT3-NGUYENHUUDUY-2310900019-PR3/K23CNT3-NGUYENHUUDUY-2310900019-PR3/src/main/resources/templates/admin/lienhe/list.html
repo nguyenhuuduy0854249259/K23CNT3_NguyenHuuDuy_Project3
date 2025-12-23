@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout/header :: admin_head}"></head>
+<body>
+<div th:replace="~{admin/layout/header :: admin_navbar}"></div>
+
+<h2>Quản lý liên hệ</h2>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Họ tên</th>
+        <th>Email</th>
+        <th>Số điện thoại</th>
+        <th>Nội dung</th>
+        <th>Thời gian gửi</th>
+        <th>Hành động</th>
+    </tr>
+    <tr th:each="lh : ${list}">
+        <td th:text="${lh.hoTen}"></td>
+        <td th:text="${lh.email}"></td>
+        <td th:text="${lh.soDienThoai}"></td>
+        <td th:text="${lh.noiDung}"></td>
+        <td th:text="${#temporals.format(lh.thoiGianGui,'dd/MM/yyyy HH:mm')}"></td>
+        <td>
+            <a th:href="@{/admin/lienhe/xoa/{id}(id=${lh.id})}">Xóa</a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

@@ -1,74 +1,177 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      lang="vi"
-      th:replace="layout/_LayoutUser :: layout(
-          'Đăng ký',
-          ~{::content},
-          ~{}
-      )">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng ký</title>
 
-<th:block th:fragment="content">
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+            font-family: Roboto, Arial, sans-serif;
+            background: linear-gradient(120deg, #007bff, #d0314c);
+            height: 100vh;
+            overflow: hidden;
+        }
 
-    <div style="
-        max-width: 500px;
-        margin: 40px auto;
-        background: #fff;
-        padding: 25px;
-        border-radius: 6px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.15);
-    ">
+        .center{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 420px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
 
-        <h2 style="text-align:center; margin-bottom:20px;">
-            Đăng ký tài khoản
-        </h2>
+        .center h1{
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid silver;
+        }
 
-        <form th:action="@{/auth/register}"
-              method="post"
-              th:object="${user}">
+        .center form{
+            padding: 0 40px 20px;
+            box-sizing: border-box;
+        }
 
+        form .txt_field{
+            position: relative;
+            border-bottom: 2px solid #adadad;
+            margin: 25px 0;
+        }
+
+        .txt_field input{
+            width: 100%;
+            padding: 0 5px;
+            height: 40px;
+            font-size: 16px;
+            border: none;
+            background: none;
+            outline: none;
+        }
+
+        .txt_field label{
+            position: absolute;
+            top: 50%;
+            left: 5px;
+            color: #adadad;
+            transform: translateY(-50%);
+            font-size: 16px;
+            pointer-events: none;
+            transition: .5s;
+        }
+
+        .txt_field span::before{
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #2691d9;
+            transition: .5s;
+        }
+
+        .txt_field input:focus ~ label,
+        .txt_field input:valid ~ label{
+            top: -5px;
+            color: #2691d9;
+        }
+
+        .txt_field input:focus ~ span::before,
+        .txt_field input:valid ~ span::before{
+            width: 100%;
+        }
+
+        input[type="submit"]{
+            width: 100%;
+            height: 45px;
+            border: none;
+            background: #2691d9;
+            border-radius: 25px;
+            font-size: 18px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        input[type="submit"]:hover{
+            background: #1a73e8;
+        }
+
+        .signup_link{
+            margin-top: 20px;
+            text-align: center;
+            font-size: 15px;
+            color: #666;
+        }
+
+        .signup_link a{
+            color: #2691d9;
+            text-decoration: none;
+        }
+
+        .signup_link a:hover{
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="center">
+    <h1>Đăng ký</h1>
+
+    <form th:action="@{/auth/register}" method="post" th:object="${user}">
+
+        <div class="txt_field">
+            <input type="text" th:field="*{tenDangNhap}" required>
+            <span></span>
             <label>Tên đăng nhập</label>
-            <input type="text" th:field="*{tenDangNhap}" required
-                   style="width:100%; padding:8px; margin-bottom:10px;">
+        </div>
 
+        <div class="txt_field">
+            <input type="password" th:field="*{matKhau}" required>
+            <span></span>
             <label>Mật khẩu</label>
-            <input type="password" th:field="*{matKhau}" required
-                   style="width:100%; padding:8px; margin-bottom:10px;">
+        </div>
 
+        <div class="txt_field">
+            <input type="text" th:field="*{hoTen}">
+            <span></span>
             <label>Họ tên</label>
-            <input type="text" th:field="*{hoTen}"
-                   style="width:100%; padding:8px; margin-bottom:10px;">
+        </div>
 
+        <div class="txt_field">
+            <input type="text" th:field="*{soDienThoai}">
+            <span></span>
             <label>Số điện thoại</label>
-            <input type="text" th:field="*{soDienThoai}"
-                   style="width:100%; padding:8px; margin-bottom:10px;">
+        </div>
 
+        <div class="txt_field">
+            <input type="email" th:field="*{email}">
+            <span></span>
             <label>Email</label>
-            <input type="email" th:field="*{email}"
-                   style="width:100%; padding:8px; margin-bottom:10px;">
+        </div>
 
+        <div class="txt_field">
+            <input type="text" th:field="*{diaChi}">
+            <span></span>
             <label>Địa chỉ</label>
-            <input type="text" th:field="*{diaChi}"
-                   style="width:100%; padding:8px; margin-bottom:15px;">
+        </div>
 
-            <button type="submit"
-                    style="
-                        width:100%;
-                        padding:10px;
-                        background:#f4a100;
-                        border:none;
-                        font-weight:bold;
-                        cursor:pointer;
-                    ">
-                Đăng ký
-            </button>
-        </form>
+        <input type="submit" value="Đăng ký">
 
-        <p style="text-align:center; margin-top:15px;">
+        <div class="signup_link">
             Đã có tài khoản?
             <a th:href="@{/auth/login}">Đăng nhập</a>
-        </p>
+        </div>
 
-    </div>
+    </form>
+</div>
 
-</th:block>
+</body>
 </html>
