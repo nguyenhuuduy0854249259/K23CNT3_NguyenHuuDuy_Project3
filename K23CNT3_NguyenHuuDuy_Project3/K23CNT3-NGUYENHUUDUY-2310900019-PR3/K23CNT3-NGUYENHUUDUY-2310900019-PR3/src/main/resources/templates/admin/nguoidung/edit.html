@@ -1,27 +1,193 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="admin/layout/header :: admin_head"></head>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout/header :: admin_head}">
+    <title>Cập nhật người dùng | Admin</title>
+</head>
+
+<style>
+    :root {
+        --primary-color: #4e73df;
+        --bg-body: #f8f9fc;
+        --border-color: #d1d3e2;
+    }
+
+    body {
+        background-color: var(--bg-body);
+        font-family: 'Inter', sans-serif;
+        color: #5a5c69;
+    }
+
+    .main-content {
+        padding: 40px 0;
+    }
+
+    /* --- FORM CARD --- */
+    .edit-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+        border: none;
+        max-width: 600px;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .card-header-edit {
+        background-color: #ffffff;
+        border-bottom: 2px solid #f1f5f9;
+        padding: 25px;
+        text-align: center;
+    }
+
+    .card-header-edit h4 {
+        margin: 0;
+        font-weight: 800;
+        color: var(--primary-color);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .card-body-edit {
+        padding: 30px 40px;
+    }
+
+    /* --- INPUT STYLES --- */
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-label {
+        font-weight: 700;
+        font-size: 0.8rem;
+        color: #4e73df;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    /* Input Read-only */
+    .input-readonly {
+        background-color: #f8f9fc !important;
+        color: #b7b9cc !important;
+        cursor: not-allowed;
+        border: 1px dashed var(--border-color) !important;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        background-color: #fff;
+        transition: all 0.2s ease;
+        font-size: 0.95rem;
+    }
+
+    .form-control-custom:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px rgba(78, 115, 223, 0.1);
+        outline: none;
+    }
+
+    /* --- BUTTONS --- */
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .btn-update {
+        flex: 2;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 14px;
+        border-radius: 10px;
+        font-weight: 700;
+        transition: 0.3s;
+        cursor: pointer;
+    }
+
+    .btn-update:hover {
+        background: #2e59d9;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(78, 115, 223, 0.3);
+    }
+
+    .btn-cancel {
+        flex: 1;
+        background: #f1f5f9;
+        color: #64748b;
+        text-align: center;
+        text-decoration: none;
+        padding: 14px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: 0.2s;
+    }
+
+    .btn-cancel:hover {
+        background: #e2e8f0;
+        color: #1e293b;
+    }
+
+    .helper-text {
+        font-size: 0.75rem;
+        color: #858796;
+        margin-top: 6px;
+        display: block;
+    }
+</style>
 
 <body>
-<div th:replace="admin/layout/header :: admin_navbar"></div>
 
-<h2>Cập nhật người dùng</h2>
+<div th:replace="~{admin/layout/header :: admin_navbar}"></div>
 
-<form th:action="@{/admin/nguoidung/edit/{id}(id=${user.id})}" method="post">
+<div class="main-content">
+    <div class="container">
 
-    <label>Tên đăng nhập</label><br>
-    <input type="text" name="tenDangNhap"
-           th:value="${user.tenDangNhap}" readonly><br><br>
+        <div class="edit-card">
+            <div class="card-header-edit">
+                <h4><i class="fas fa-user-edit me-2"></i> Cập nhật thông tin</h4>
+            </div>
 
-    <label>Mật khẩu mới (để trống nếu không đổi)</label><br>
-    <input type="password" name="matKhau"><br><br>
+            <div class="card-body-edit">
+                <form th:action="@{/admin/nguoidung/edit/{id}(id=${user.id})}" method="post">
 
-    <label>Email</label><br>
-    <input type="email" name="email"
-           th:value="${user.email}"><br><br>
+                    <div class="form-group">
+                        <label class="form-label">Tên đăng nhập (Cố định)</label>
+                        <input type="text" name="tenDangNhap" th:value="${user.tenDangNhap}"
+                               class="form-control-custom input-readonly" readonly>
+                        <span class="helper-text"><i class="fas fa-info-circle me-1"></i> Tên đăng nhập không thể thay đổi để đảm bảo tính nhất quán hệ thống.</span>
+                    </div>
 
-    <button type="submit">Cập nhật</button>
-</form>
+                    <div class="form-group">
+                        <label class="form-label">Địa chỉ Email</label>
+                        <input type="email" name="email" th:value="${user.email}"
+                               class="form-control-custom" placeholder="nhapemail@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Mật khẩu mới</label>
+                        <input type="password" name="matKhau" class="form-control-custom"
+                               placeholder="Để trống nếu không muốn thay đổi">
+                        <span class="helper-text text-warning font-italic">Lưu ý: Chỉ nhập nếu bạn muốn đổi mật khẩu mới cho người dùng này.</span>
+                    </div>
+
+                    <div class="form-actions">
+                        <a th:href="@{/admin/nguoidung}" class="btn-cancel">Hủy bỏ</a>
+                        <button type="submit" class="btn-update">
+                            <i class="fas fa-check-circle me-2"></i> Xác nhận cập nhật
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
 
 </body>
 </html>

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,12 +27,17 @@ public class DonHang {
     private String tenNguoiNhan;
     private String soDienThoaiNhan;
     private String diaChiNhan;
+    // Thêm trường này vào
+    private String phuongThucThanhToan;
     private String trangThai;
+
 
     @ManyToOne
     @JoinColumn(name = "nguoi_dung_id")
     private NguoiDung nguoiDung;
 
+    // Trong file DonHang.java
     @OneToMany(mappedBy = "donHang", cascade = CascadeType.ALL)
-    private List<DonHangChiTiet> chiTietDonHang;
+    @Builder.Default // Nếu bạn dùng @Builder của Lombok, phải có dòng này
+    private List<DonHangChiTiet> donHangChiTiet = new ArrayList<>();
 }

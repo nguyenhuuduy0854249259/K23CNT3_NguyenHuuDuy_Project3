@@ -4,167 +4,136 @@
 <head th:replace="~{admin/layout/header :: admin_head}"></head>
 
 <style>
-    body {
-        background-color: #f4f6f9;
-        font-family: Arial, Helvetica, sans-serif;
-    }
-
-    h2 {
-        margin: 20px 0;
-        font-weight: 700;
-        color: #2c3e50;
-    }
-
-    .form-container {
-        max-width: 700px;
-        background: #fff;
-        padding: 25px;
-        border-radius: 10px;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-    }
-
-    label {
-        font-weight: 600;
-        margin-top: 12px;
-        display: block;
-    }
-
-    input[type="text"],
-    input[type="number"],
-    textarea,
-    input[type="file"] {
-        width: 100%;
-        padding: 8px 10px;
-        margin-top: 5px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        font-size: 14px;
-    }
-
-    textarea {
-        resize: vertical;
-    }
-
-    .image-preview {
-        margin-top: 10px;
-        text-align: center;
-    }
-
-    .image-preview img {
-        max-width: 200px;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-    }
-
-    .form-actions {
-        margin-top: 20px;
-        display: flex;
-        gap: 10px;
-    }
-
-    .btn-save {
-        background: linear-gradient(135deg, #28a745, #1e7e34);
-        color: #fff;
-        border: none;
-        padding: 8px 18px;
-        border-radius: 6px;
-        font-weight: 600;
-        cursor: pointer;
-    }
-
-    .btn-cancel {
-        background: #6c757d;
-        color: #fff;
-        padding: 8px 18px;
-        border-radius: 6px;
-        text-decoration: none;
-        font-weight: 600;
-    }
-
-    .btn-save:hover,
-    .btn-cancel:hover {
-        opacity: 0.9;
-    }
+    :root { --primary-admin: #4e73df; --success-admin: #1cc88a; --bg-admin: #f8f9fc; --border-color: #e3e6f0; }
+    body { background-color: var(--bg-admin); font-family: 'Segoe UI', Roboto, sans-serif; color: #5a5c69; }
+    .page-title { font-weight: 700; color: #4e73df; text-transform: uppercase; border-left: 5px solid var(--primary-admin); padding-left: 15px; margin-bottom: 25px; }
+    .form-card { background: #fff; border-radius: 12px; box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1); padding: 30px; margin-bottom: 50px; }
+    label { font-size: 0.85rem; font-weight: 700; color: #4e73df; text-transform: uppercase; margin-bottom: 8px; }
+    .form-control, .form-select { border-radius: 8px; padding: 10px 15px; border: 1px solid var(--border-color); }
+    .form-control:focus, .form-select:focus { border-color: #bac8f3; box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.1); }
+    .upload-section { background: #f8f9fa; padding: 20px; border-radius: 10px; border: 2px dashed #d1d3e2; }
+    .preview-item { background: #fff; padding: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; }
+    .preview-item img { height: 140px; width: 140px; object-fit: cover; border-radius: 6px; border: 1px solid #eee; }
+    .btn-save { background: var(--primary-admin); color: white; border: none; padding: 10px 30px; border-radius: 8px; font-weight: 700; }
+    .btn-save:hover { background: #2e59d9; transform: translateY(-2px); transition: 0.2s; }
 </style>
 
 <body>
 
 <div th:replace="~{admin/layout/header :: admin_navbar}"></div>
 
-<div class="container-fluid mt-3">
-    <h2 th:text="${title}"></h2>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-xl-10 col-lg-12">
 
-    <div class="form-container">
+            <h2 class="page-title" th:text="${title}">Quản lý sản phẩm</h2>
 
-        <form th:action="@{${action}}"
-              method="post"
-              enctype="multipart/form-data">
+            <div class="form-card">
+                <form th:action="${action}"
+                      th:object="${sp}"
+                      method="post"
+                      enctype="multipart/form-data">
 
-            <!-- Tên -->
-            <label>Tên sản phẩm</label>
-            <input type="text" name="ten"
-                   th:value="${sp.ten}" required>
+                    <input type="hidden" th:field="*{id}">
+                    <input type="hidden" th:field="*{hinhAnh}">
 
-            <!-- Giá -->
-            <label>Giá</label>
-            <input type="number" name="gia"
-                   th:value="${sp.gia}" required>
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <label class="form-label">Tên sản phẩm <span class="text-danger">*</span></label>
+                            <input type="text" th:field="*{ten}" class="form-control" placeholder="Nhập tên sản phẩm..." required>
+                        </div>
 
-            <!-- Số lượng -->
-            <label>Số lượng tồn</label>
-            <input type="number" name="soLuongTon"
-                   th:value="${sp.soLuongTon}" required>
+                        <div class="col-md-6">
+                            <label class="form-label">Danh mục</label>
+                            <select th:field="*{danhMuc.id}" class="form-select">
+                                <option value="">-- Chọn danh mục --</option>
+                                <option th:if="${listDanhMuc != null}"
+                                        th:each="dm : ${listDanhMuc}"
+                                        th:value="${dm.id}"
+                                        th:text="${dm.ten}"></option>
+                            </select>
+                        </div>
 
-            <!-- Mô tả -->
-            <label>Mô tả</label>
-            <textarea name="moTa" rows="4"
-                      th:text="${sp.moTa}"></textarea>
+                        <div class="col-md-6">
+                            <label class="form-label">Thương hiệu</label>
+                            <select th:field="*{thuongHieu.id}" class="form-select">
+                                <option value="">-- Chọn thương hiệu --</option>
+                                <option th:if="${listThuongHieu != null}"
+                                        th:each="th : ${listThuongHieu}"
+                                        th:value="${th.id}"
+                                        th:text="${th.ten}"></option>
+                            </select>
+                        </div>
 
-            <!-- Upload ảnh -->
-            <label>Hình ảnh sản phẩm</label>
-            <input type="file"
-                   name="file"
-                   accept="image/*"
-                   onchange="previewImage(this)">
+                        <div class="col-md-6">
+                            <label class="form-label">Giá bán</label>
+                            <div class="input-group">
+                                <input type="number" th:field="*{gia}" class="form-control" placeholder="0">
+                                <span class="input-group-text">VNĐ</span>
+                            </div>
+                        </div>
 
-            <!-- Ảnh hiện tại -->
-            <div class="image-preview" th:if="${sp.hinhAnh != null}">
-                <p class="text-muted">Ảnh hiện tại</p>
-                <img th:src="@{'/uploads/' + ${sp.hinhAnh}}">
-                <input type="hidden" name="hinhAnh"
-                       th:value="${sp.hinhAnh}">
+                        <div class="col-md-6">
+                            <label class="form-label">Tồn kho</label>
+                            <input type="number" th:field="*{soLuongTon}" class="form-control" placeholder="0">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Mô tả</label>
+                            <textarea th:field="*{moTa}" class="form-control" rows="4"></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Hình ảnh</label>
+                            <div class="upload-section">
+                                <input type="file" name="file" class="form-control mb-3"
+                                       accept="image/*" onchange="handleImagePreview(this)">
+
+                                <div class="d-flex gap-3 justify-content-center flex-wrap">
+
+                                    <div class="preview-item" th:if="${sp.hinhAnh != null and sp.hinhAnh != ''}" id="oldImageBox">
+                                        <div class="small fw-bold text-secondary mb-2">ẢNH HIỆN TẠI</div>
+                                        <img th:src="@{'/uploads/' + ${sp.hinhAnh}}" alt="Ảnh cũ">
+                                    </div>
+
+                                    <div class="preview-item" id="previewBox" style="display:none">
+                                        <div class="small fw-bold text-success mb-2">ẢNH MỚI CHỌN</div>
+                                        <img id="previewImg">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 text-end">
+                        <a th:href="@{/admin/sanpham/list}" class="btn btn-secondary me-2">Quay lại</a>
+                        <button type="submit" class="btn-save">
+                            <i class="bi bi-save me-2"></i> Lưu dữ liệu
+                        </button>
+                    </div>
+                </form>
             </div>
-
-            <!-- Preview ảnh mới -->
-            <div class="image-preview" id="previewBox" style="display:none">
-                <p class="text-muted">Ảnh mới</p>
-                <img id="previewImg">
-            </div>
-
-            <!-- Actions -->
-            <div class="form-actions">
-                <button type="submit" class="btn-save">
-                    💾 Lưu
-                </button>
-                <a th:href="@{/admin/sanpham/list}"
-                   class="btn-cancel">
-                    Huỷ
-                </a>
-            </div>
-
-        </form>
-
+        </div>
     </div>
 </div>
 
 <script>
-    function previewImage(input) {
+    function handleImagePreview(input) {
+        const previewBox = document.getElementById('previewBox');
+        const previewImg = document.getElementById('previewImg');
+        const oldImageBox = document.getElementById('oldImageBox');
+
         if (input.files && input.files[0]) {
             const reader = new FileReader();
-            reader.onload = function (e) {
-                document.getElementById('previewImg').src = e.target.result;
-                document.getElementById('previewBox').style.display = 'block';
-            };
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                previewBox.style.display = 'block';
+
+                // (Tuỳ chọn) Ẩn ảnh cũ đi khi đã chọn ảnh mới để đỡ rối mắt
+                if(oldImageBox) {
+                    oldImageBox.style.opacity = '0.5';
+                }
+            }
             reader.readAsDataURL(input.files[0]);
         }
     }

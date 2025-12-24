@@ -7,7 +7,9 @@ import com.example.K23CNT3_NGUYENHUUDUY_2310900019_PR3.repository.DonHangReposit
 import com.example.K23CNT3_NGUYENHUUDUY_2310900019_PR3.repository.DonHangChiTietRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +28,10 @@ public class DonHangService {
         return donHangRepository.findByMaDonHang(ma);
     }
 
+    public Optional<DonHang> findById(Long id) {
+        return donHangRepository.findById(id);
+    }
+
     public DonHang save(DonHang dh) {
         return donHangRepository.save(dh);
     }
@@ -34,19 +40,59 @@ public class DonHangService {
         return donHangRepository.count();
     }
 
-    // ==============================
-    // CHUYỂN CHI TIẾT GIỎ HÀNG SANG ĐƠN HÀNG
-    // ==============================
+    // Thêm vào trong class DonHangService
+    public List<DonHang> findAll() {
+        return donHangRepository.findAll();
+    }
+
+    // ==========================================
+    // PHƯƠNG THỨC TẠO ĐƠN HÀNG HOÀN CHỈNH
+    // ==========================================
+    @Transactional
+    public DonHang createDonHang(DonHang donHang, List<GioHangChiTiet> cartItems) {
+        // 1. Kiểm tra và khởi tạo list nếu bị null để tránh lỗi .getDonHangChiTiet()
+        if (donHang.getDonHangChiTiet() == null) {
+            donHang.setDonHangChiTiet(new ArrayList<>());
+        }
+
+        // 2. Lưu DonHang trước để có ID (bắt buộc để làm khóa ngoại)
+        DonHang savedDonHang = donHangRepository.save(donHang);
+
+        // 3. Chuyển từ GioHangChiTiet sang DonHangChiTiet
+        for (GioHangChiTiet item : cartItems) {
+            DonHangChiTiet dhct = DonHangChiTiet.builder()
+                    .donHang(savedDonHang) // Quan trọng: Gán đơn hàng đã lưu vào đây
+                    .sanPham(item.getSanPham())
+                    .soLuong(item.getSoLuong())
+                    .gia(item.getSanPham().getGia())
+                    .build();
+
+            // Lưu từng chi tiết vào DB
+            donHangChiTietRepository.save(dhct);
+
+            // Thêm vào list của object để trả về đầy đủ dữ liệu
+            savedDonHang.getDonHangChiTiet().add(dhct);
+        }
+
+        return savedDonHang;
+    }
+
+    // Nếu bạn vẫn muốn dùng phương thức cũ, hãy sửa như sau:
+    @Transactional
     public void addChiTietDonHang(DonHang donHang, GioHangChiTiet ct) {
+        // Kiểm tra null an toàn
+        if (donHang.getDonHangChiTiet() == null) {
+            donHang.setDonHangChiTiet(new ArrayList<>());
+        }
+
         DonHangChiTiet dhct = DonHangChiTiet.builder()
                 .donHang(donHang)
                 .sanPham(ct.getSanPham())
                 .soLuong(ct.getSoLuong())
                 .gia(ct.getSanPham().getGia())
                 .build();
-        donHangChiTietRepository.save(dhct);
 
-        // thêm vào danh sách chi tiết đơn hàng
-        donHang.getChiTietDonHang().add(dhct);
+        donHangChiTietRepository.save(dhct);
+        donHang.getDonHangChiTiet().add(dhct);
     }
 }

@@ -1,40 +1,229 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      th:replace="layout/_LayoutUser :: layout(
-          'Đơn hàng của tôi',
-          ~{::content},
-          ~{}
-      )">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đơn hàng của tôi | Vật Liệu Xây Dựng</title>
 
-<th:block th:fragment="content">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <h1>Đơn hàng của tôi</h1>
+    <style>
+        :root {
+            --primary-color: #f4a100;
+            --bg-body: #f4f7f6;
+            --text-main: #2d3436;
+        }
 
-    <table class="table table-bordered">
-        <thead>
-        <tr>
-            <th>Mã đơn hàng</th>
-            <th>Ngày đặt</th>
-            <th>Tổng tiền</th>
-            <th>Trạng thái</th>
-            <th>Chi tiết</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="dh : ${listDonHang}">
-            <td th:text="${dh.maDonHang}"></td>
-            <td th:text="${#temporals.format(dh.ngayDat,'dd/MM/yyyy HH:mm')}"></td>
-            <td th:text="${#numbers.formatDecimal(dh.tongTien,0,'POINT',0,'COMMA')} + ' đ'"></td>
-            <td th:text="${dh.trangThai}"></td>
-            <td>
-                <a th:href="@{/donhang/{id}(id=${dh.id})}" class="btn btn-sm btn-primary">
-                    Xem chi tiết
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            padding-top: 40px;
+        }
 
-</th:block>
+        .order-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
 
+        /* --- HEADER --- */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-weight: 800;
+            font-size: 1.75rem;
+            color: #1e293b;
+            margin: 0;
+            position: relative;
+        }
+
+        .page-title::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 4px;
+            background: var(--primary-color);
+            margin-top: 8px;
+            border-radius: 2px;
+        }
+
+        /* --- TABLE CARD --- */
+        .order-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: none;
+            overflow: hidden;
+        }
+
+        .table {
+            margin-bottom: 0;
+            vertical-align: middle;
+        }
+
+        .table thead {
+            background-color: #f8fafc;
+        }
+
+        .table thead th {
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .table tbody td {
+            padding: 20px;
+            font-size: 0.95rem;
+            color: #334155;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table tbody tr:hover {
+            background-color: #fcfcfc;
+        }
+
+        /* --- BADGE STATUS --- */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        /* Tùy biến màu sắc dựa theo text trạng thái */
+        .status-pending { background: #fff7ed; color: #c2410c; } /* Chờ xử lý */
+        .status-shipping { background: #eff6ff; color: #1d4ed8; } /* Đang giao */
+        .status-completed { background: #f0fdf4; color: #15803d; } /* Hoàn thành */
+        .status-cancel { background: #fef2f2; color: #b91c1c; } /* Đã hủy */
+
+        /* --- BUTTON --- */
+        .btn-detail {
+            background-color: #fff;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+
+        .btn-detail:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(244, 161, 0, 0.2);
+        }
+
+        .btn-back {
+            text-decoration: none;
+            color: #64748b;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .btn-back:hover {
+            color: var(--primary-color);
+        }
+
+        /* --- EMPTY STATE --- */
+        .empty-state {
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container order-container">
+
+    <div class="mb-3">
+        <a th:href="@{/}" class="btn-back">← Quay lại trang chủ</a>
+    </div>
+
+    <div class="page-header">
+        <h1 class="page-title">Đơn hàng của tôi</h1>
+        <div class="text-muted small">Bạn có <span class="fw-bold text-dark" th:text="${#lists.size(listDonHang)}">0</span> đơn hàng</div>
+    </div>
+
+    <div class="order-card">
+
+        <div th:if="${listDonHang == null || #lists.isEmpty(listDonHang)}" class="empty-state">
+            <span class="empty-icon">📜</span>
+            <h5 class="text-dark">Chưa có đơn hàng nào</h5>
+            <p class="text-muted">Có vẻ như bạn chưa đặt mua sản phẩm nào từ cửa hàng.</p>
+            <a th:href="@{/sanpham}" class="btn btn-warning mt-3 px-4 fw-bold">Mua sắm ngay</a>
+        </div>
+
+        <div th:if="${listDonHang != null && !#lists.isEmpty(listDonHang)}" class="table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Mã đơn</th>
+                    <th>Ngày đặt hàng</th>
+                    <th>Tổng thanh toán</th>
+                    <th>Trạng thái</th>
+                    <th class="text-center">Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="dh : ${listDonHang}">
+                    <td>
+                        <span class="fw-bold text-primary" th:text="'#' + ${dh.maDonHang}"></span>
+                    </td>
+                    <td>
+                        <span th:text="${#temporals.format(dh.ngayDat,'dd/MM/yyyy HH:mm')}"></span>
+                    </td>
+                    <td>
+                        <span class="fw-bold text-danger" th:text="${#numbers.formatDecimal(dh.tongTien,0,'POINT',0,'COMMA')} + ' đ'"></span>
+                    </td>
+                    <td>
+                            <span class="status-badge"
+                                  th:classappend="${dh.trangThai == 'Hoàn thành' ? 'status-completed' :
+                                                   (dh.trangThai == 'Đang giao' ? 'status-shipping' :
+                                                   (dh.trangThai == 'Đã hủy' ? 'status-cancel' : 'status-pending'))}"
+                                  th:text="${dh.trangThai}">
+                            </span>
+                    </td>
+                    <td class="text-center">
+                        <a th:href="@{/donhang/{id}(id=${dh.id})}" class="btn btn-sm btn-primary">
+                            Xem chi tiết
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="mt-4 text-center">
+        <p class="small text-muted">Nếu có bất kỳ thắc mắc nào, vui lòng liên hệ <span class="text-dark fw-bold">Hotline: 1900 1234</span></p>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
 </html>

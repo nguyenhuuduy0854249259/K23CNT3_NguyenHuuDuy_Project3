@@ -1,25 +1,205 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="admin/layout/header :: admin_head"></head>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout/header :: admin_head}">
+    <title>Thêm người dùng mới</title>
+</head>
+
+<style>
+    :root {
+        --primary-color: #4e73df;
+        --bg-body: #f8f9fc;
+        --border-color: #d1d3e2;
+    }
+
+    body {
+        background-color: var(--bg-body);
+        font-family: 'Inter', sans-serif;
+        color: #5a5c69;
+    }
+
+    .main-content {
+        padding: 40px 0;
+    }
+
+    /* --- Form Card --- */
+    .form-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+        border: none;
+        max-width: 600px;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .card-header-custom {
+        background-color: #f8f9fc;
+        border-bottom: 1px solid #e3e6f0;
+        padding: 20px 25px;
+    }
+
+    .card-header-custom h4 {
+        margin: 0;
+        font-weight: 700;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .card-body-custom {
+        padding: 30px 40px;
+    }
+
+    /* --- Input Styles --- */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: #4e73df;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .input-group-custom {
+        position: relative;
+    }
+
+    .input-group-custom i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #b7b9cc;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        padding: 12px 15px 12px 45px; /* Chừa khoảng trống cho icon bên trái */
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        background-color: #fff;
+        transition: all 0.2s ease-in-out;
+        font-size: 0.95rem;
+    }
+
+    .form-control-custom:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.1);
+        outline: none;
+    }
+
+    /* --- Buttons --- */
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .btn-save {
+        flex: 2;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 10px;
+        font-weight: 700;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+
+    .btn-save:hover {
+        background: #2e59d9;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(78, 115, 223, 0.3);
+    }
+
+    .btn-back {
+        flex: 1;
+        background: #eaecf4;
+        color: #5a5c69;
+        text-align: center;
+        text-decoration: none;
+        padding: 12px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+    .btn-back:hover {
+        background: #d1d3e2;
+        color: #3a3b45;
+    }
+
+    /* Helper text */
+    .form-text {
+        font-size: 0.75rem;
+        color: #858796;
+        margin-top: 5px;
+    }
+</style>
 
 <body>
-<div th:replace="admin/layout/header :: admin_navbar"></div>
 
-<h2>Thêm người dùng</h2>
+<div th:replace="~{admin/layout/header :: admin_navbar}"></div>
 
-<form th:action="@{/admin/nguoidung/create}" method="post">
+<div class="main-content">
+    <div class="container">
 
-    <label>Tên đăng nhập</label><br>
-    <input type="text" name="tenDangNhap" required><br><br>
+        <div class="form-card">
+            <div class="card-header-custom">
+                <h4><i class="fas fa-user-plus"></i> Tạo tài khoản người dùng</h4>
+            </div>
 
-    <label>Mật khẩu</label><br>
-    <input type="password" name="matKhau" required><br><br>
+            <div class="card-body-custom">
+                <form th:action="@{/admin/nguoidung/create}" method="post">
 
-    <label>Email</label><br>
-    <input type="email" name="email"><br><br>
+                    <div class="form-group">
+                        <label class="form-label">Tên đăng nhập</label>
+                        <div class="input-group-custom">
+                            <i class="fas fa-user"></i>
+                            <input type="text" name="tenDangNhap" class="form-control-custom"
+                                   placeholder="Nhập tên đăng nhập..." required>
+                        </div>
+                    </div>
 
-    <button type="submit">Lưu</button>
-</form>
+                    <div class="form-group">
+                        <label class="form-label">Mật khẩu</label>
+                        <div class="input-group-custom">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" name="matKhau" class="form-control-custom"
+                                   placeholder="Nhập mật khẩu bảo mật..." required>
+                        </div>
+                        <div class="form-text italic text-muted">Mật khẩu nên có ít nhất 6 ký tự.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Địa chỉ Email</label>
+                        <div class="input-group-custom">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" name="email" class="form-control-custom"
+                                   placeholder="example@gmail.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <a th:href="@{/admin/nguoidung}" class="btn-back">Hủy bỏ</a>
+                        <button type="submit" class="btn-save">
+                            <i class="fas fa-save me-2"></i> Lưu người dùng
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
 
 </body>
 </html>

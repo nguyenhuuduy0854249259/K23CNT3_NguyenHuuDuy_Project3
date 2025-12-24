@@ -24,26 +24,16 @@ public class CheckoutController {
     private final GioHangService gioHangService;
     private final DonHangService donHangService;
 
-    // =========================
-    // HIỂN THỊ TRANG CHECKOUT
-    // =========================
     @GetMapping
     public String checkoutForm(Authentication authentication, Model model) {
-
         if (authentication == null || authentication.getName().equals("anonymousUser")) {
             return "redirect:/auth/login";
         }
 
-        NguoiDung user = nguoiDungRepository
-                .findByTenDangNhap(authentication.getName())
-                .orElse(null);
+        NguoiDung user = nguoiDungRepository.findByEmail(authentication.getName()).orElse(null);
+        if (user == null) return "redirect:/auth/login";
 
-        if (user == null) {
-            return "redirect:/auth/login";
-        }
-
-        GioHang gioHang = gioHangService.findByNguoiDung(user.getId())
-                .orElse(new GioHang());
+        GioHang gioHang = gioHangService.findByNguoiDung(user.getId()).orElse(new GioHang());
 
         double tongTien = gioHang.getChiTietList().stream()
                 .mapToDouble(ct -> ct.getSanPham().getGia() * ct.getSoLuong())
@@ -53,12 +43,9 @@ public class CheckoutController {
         model.addAttribute("cartItems", gioHang.getChiTietList());
         model.addAttribute("tongTien", tongTien);
 
-        return "user/checkout/list"; // file checkout.html
+        return "user/checkout/index";
     }
 
-    // =========================
-    // XỬ LÝ ĐẶT HÀNG
-    // =========================
     @PostMapping
     public String placeOrder(Authentication authentication,
                              @RequestParam String hoTen,
@@ -69,52 +56,47 @@ public class CheckoutController {
             return "redirect:/auth/login";
         }
 
-        NguoiDung user = nguoiDungRepository
-                .findByTenDangNhap(authentication.getName())
-                .orElse(null);
+        NguoiDung user = nguoiDungRepository.findByEmail(authentication.getName()).orElse(null);
+        if (user == null) return "redirect:/auth/login";
 
-        if (user == null) {
-            return "redirect:/auth/login";
-        }
-
-        GioHang gioHang = gioHangService.findByNguoiDung(user.getId())
-                .orElse(new GioHang());
-
+        GioHang gioHang = gioHangService.findByNguoiDung(user.getId()).orElse(new GioHang());
         if (gioHang.getChiTietList().isEmpty()) {
-            return "redirect:/giohang"; // nếu không có sản phẩm
+            return "redirect:/giohang";
         }
 
-        // Tạo đơn hàng
+        // 1. TẠO ĐỐI TƯỢNG ĐƠN HÀNG
         DonHang donHang = DonHang.builder()
-                .maDonHang(UUID.randomUUID().toString())
+                .maDonHang(UUID.randomUUID().toString().substring(0, 8).toUpperCase())
                 .ngayDat(LocalDateTime.now())
                 .tongTien(gioHang.getChiTietList().stream()
                         .mapToDouble(ct -> ct.getSanPham().getGia() * ct.getSoLuong())
                         .sum())
-                .tenNguoiNhan(hoTen)
-                .soDienThoaiNhan(soDienThoai)
-                .diaChiNhan(diaChi)
+                .tenNguoiNhan(hoTen)        // Khớp với Entity
+                .soDienThoaiNhan(soDienThoai) // Khớp với Entity
+                .diaChiNhan(diaChi)         // Khớp với Entity
+                .phuongThucThanhToan("Thanh toán khi nhận hàng (COD)")
                 .trangThai("Đang xử lý")
                 .nguoiDung(user)
                 .build();
 
-        // Chuyển chi tiết giỏ hàng sang chi tiết đơn hàng
+        // 2. LƯU ĐƠN HÀNG TRƯỚC (Để sinh ID vào Database)
+        // Đây là bước quan trọng nhất để sửa lỗi TransientObjectException
+        DonHang savedDonHang = donHangService.save(donHang);
+
+        // 3. CHUYỂN CHI TIẾT TỪ GIỎ SANG ĐƠN HÀNG (Sử dụng savedDonHang đã có ID)
         gioHang.getChiTietList().forEach(ct -> {
-            donHangService.addChiTietDonHang(donHang, ct);
+            donHangService.addChiTietDonHang(savedDonHang, ct);
         });
 
-        donHangService.save(donHang);
-
-        // Xóa giỏ hàng sau khi đặt
+        // 4. XÓA GIỎ HÀNG SAU KHI ĐẶT THÀNH CÔNG
+        // Lưu ý: Tùy vào thiết kế DB, bạn có thể cần xóa chi tiết trước rồi mới clear list
+        // Nếu Repo của bạn hỗ trợ deleteAllByGioHangId thì dùng nó sẽ sạch hơn.
         gioHang.getChiTietList().clear();
         gioHangService.save(gioHang);
 
         return "redirect:/checkout/success";
     }
 
-    // =========================
-    // TRANG THÀNH CÔNG
-    // =========================
     @GetMapping("/success")
     public String successPage() {
         return "user/checkout/success";

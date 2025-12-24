@@ -33,6 +33,10 @@ public class LienHeService {
         return repo.save(lh);
     }
 
+    public void deleteById(Long id) {
+        repo.deleteById(id);
+    }
+
     /**
      * Tìm liên hệ theo ID
      */

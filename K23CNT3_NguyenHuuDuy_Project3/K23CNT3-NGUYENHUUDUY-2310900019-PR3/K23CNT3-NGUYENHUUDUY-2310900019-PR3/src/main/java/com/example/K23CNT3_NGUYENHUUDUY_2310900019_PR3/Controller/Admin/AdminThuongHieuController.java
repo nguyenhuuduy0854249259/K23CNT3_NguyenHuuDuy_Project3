@@ -58,7 +58,6 @@ public class AdminThuongHieuController {
 
         thuongHieu.setId(id);
         thuongHieuService.save(thuongHieu);
-
         return "redirect:/admin/thuonghieu";
     }
 

@@ -8,87 +8,220 @@
       )">
 
 <th:block th:fragment="content">
+    <style>
+        /* Tinh chỉnh bố cục chi tiết */
+        .product-detail-container {
+            background: #fff;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
 
-    <h2>Chi tiết sản phẩm</h2>
+        .img-detail-wrapper {
+            background-color: #fdfdfd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border-radius: 12px;
+        }
 
-    <div th:if="${sp != null}" class="card p-3 mb-3">
+        .img-detail {
+            max-height: 400px;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
 
-        <img th:src="${sp.hinhAnh != null && sp.hinhAnh != ''} ? @{/images/{img}(img=${sp.hinhAnh})} : @{/images/no-image.png}"
-             alt="Ảnh sản phẩm"
-             class="img-fluid mb-3"
-             style="max-height:300px; object-fit:cover">
+        .img-detail:hover {
+            transform: scale(1.02);
+        }
 
-        <h3 th:text="${sp.ten}"></h3>
-        <p class="text-danger fw-bold" th:text="${#numbers.formatDecimal(sp.gia,0,'POINT',0,'COMMA')} + ' đ'"></p>
-        <p><strong>Mô tả:</strong> <span th:text="${sp.moTa}"></span></p>
-        <p><strong>Danh mục:</strong> <span th:text="${sp.danhMuc != null ? sp.danhMuc.ten : 'Chưa phân loại'}"></span></p>
-        <p><strong>Thương hiệu:</strong> <span th:text="${sp.thuongHieu != null ? sp.thuongHieu.ten : 'Chưa có thương hiệu'}"></span></p>
+        .product-info-box {
+            padding: 10px 20px;
+        }
 
-        <!-- NÚT MUA NGAY -->
-        <sec:authorize access="isAuthenticated()">
-            <form th:action="@{/giohang/add}" method="post" class="mt-3">
-                <input type="hidden" name="productId" th:value="${sp.id}" />
-                <button type="submit" class="btn btn-success btn-sm">Mua ngay</button>
+        .product-name {
+            font-weight: 800;
+            color: #2d3436;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .product-price-large {
+            font-size: 2rem;
+            color: #d63031;
+            font-weight: 800;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .meta-item {
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            color: #636e72;
+        }
+
+        .meta-item strong {
+            color: #2d3436;
+            width: 120px;
+            display: inline-block;
+        }
+
+        /* Phần đánh giá */
+        .review-card {
+            background: #fcfcfc;
+            border-left: 4px solid #f4a100;
+            margin-bottom: 15px;
+            padding: 15px;
+            transition: 0.3s;
+        }
+
+        .review-card:hover {
+            background: #fff8eb;
+        }
+
+        .star-rating {
+            color: #f4a100;
+            font-weight: bold;
+        }
+
+        .review-form-box {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 30px;
+        }
+
+        .btn-buy-now {
+            background-color: #f4a100;
+            border: none;
+            padding: 12px 30px;
+            font-weight: 700;
+            border-radius: 8px;
+            color: white;
+            transition: 0.3s;
+        }
+
+        .btn-buy-now:hover {
+            background-color: #e69500;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(244, 161, 0, 0.3);
+            color: white;
+        }
+    </style>
+
+    <div class="mb-4">
+        <a th:href="@{/sanpham}" class="text-muted text-decoration-none">
+            <small>← Quay lại danh sách sản phẩm</small>
+        </a>
+    </div>
+
+    <div th:if="${sp != null}" class="product-detail-container p-4">
+        <div class="row">
+            <div class="col-md-5">
+                <div class="img-detail-wrapper border">
+                    <img th:src="${sp.hinhAnh != null && sp.hinhAnh != ''} ? @{/images/{img}(img=${sp.hinhAnh})} : @{/images/no-image.png}"
+                         alt="Ảnh sản phẩm"
+                         class="img-fluid img-detail">
+                </div>
+            </div>
+
+            <div class="col-md-7">
+                <div class="product-info-box">
+                    <h2 class="product-name" th:text="${sp.ten}"></h2>
+
+                    <span class="product-price-large"
+                          th:text="${#numbers.formatDecimal(sp.gia,0,'POINT',0,'COMMA')} + ' đ'"></span>
+
+                    <div class="meta-data mb-4">
+                        <div class="meta-item">
+                            <strong>Danh mục:</strong>
+                            <span class="badge bg-light text-dark border" th:text="${sp.danhMuc != null ? sp.danhMuc.ten : 'Chưa phân loại'}"></span>
+                        </div>
+                        <div class="meta-item">
+                            <strong>Thương hiệu:</strong>
+                            <span th:text="${sp.thuongHieu != null ? sp.thuongHieu.ten : 'Chưa có thương hiệu'}"></span>
+                        </div>
+                        <div class="meta-item mt-3">
+                            <strong>Mô tả:</strong>
+                            <p class="mt-2 text-secondary" style="line-height: 1.8;" th:text="${sp.moTa}"></p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="mt-4">
+                        <div class="mt-4">
+                            <div sec:authorize="isAuthenticated()">
+                                <form th:action="@{/giohang/add}" method="post">
+                                    <input type="hidden" name="productId" th:value="${sp.id}" />
+                                    <input type="hidden" name="quantity" value="1" />
+                                    <button type="submit" class="btn btn-buy-now">
+                                        🛒 THÊM VÀO GIỎ HÀNG
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div sec:authorize="!isAuthenticated()">
+                                <div class="alert alert-light border shadow-sm">
+                                    💡 Bạn cần
+                                    <a th:href="@{/auth/login}" class="fw-bold text-primary">đăng nhập</a>
+                                    để mua sản phẩm này.
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <h4 class="fw-bold mb-4">Đánh giá từ khách hàng</h4>
+
+        <div th:if="${listDanhGia == null || #lists.isEmpty(listDanhGia)}" class="text-center py-4">
+            <p class="text-muted">Chưa có đánh giá nào. Hãy là người đầu tiên đánh giá sản phẩm này!</p>
+        </div>
+
+        <div th:each="dg : ${listDanhGia}" class="review-card rounded shadow-sm">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div>
+                    <strong class="text-dark" th:text="${dg.nguoiDung != null ? dg.nguoiDung.username : 'Người dùng'}"></strong>
+                    <span class="star-rating ms-2">
+                        <span th:each="i : ${#numbers.sequence(1, dg.soSao)}">⭐</span>
+                    </span>
+                </div>
+                <small class="text-muted" th:text="${#temporals.format(dg.thoiGian,'dd/MM/yyyy HH:mm')}"></small>
+            </div>
+            <p class="mb-0 text-secondary" th:text="${dg.binhLuan}"></p>
+        </div>
+
+        <div sec:authorize="isAuthenticated()" class="review-form-box shadow-sm">
+            <h5 class="fw-bold mb-3">Gửi đánh giá của bạn</h5>
+            <form th:action="@{/sanpham/danhgia/{id}(id=${sp.id})}" method="post" th:object="${newDanhGia}">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold small">Số sao</label>
+                        <select class="form-select border-0 shadow-sm" th:field="*{soSao}" required>
+                            <option th:value="null">-- Chọn mức độ hài lòng --</option>
+                            <option value="5">5 ⭐ (Tuyệt vời)</option>
+                            <option value="4">4 ⭐ (Tốt)</option>
+                            <option value="3">3 ⭐ (Bình thường)</option>
+                            <option value="2">2 ⭐ (Kém)</option>
+                            <option value="1">1 ⭐ (Rất tệ)</option>
+                        </select>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label class="form-label fw-bold small">Nội dung bình luận</label>
+                        <textarea class="form-control border-0 shadow-sm" th:field="*{binhLuan}" rows="3" placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm..." required></textarea>
+                    </div>
+                </div>
+                <button class="btn btn-dark px-4 fw-bold">Gửi đánh giá ngay</button>
             </form>
-        </sec:authorize>
+        </div>
 
-        <sec:authorize access="!isAuthenticated()">
-            <p class="text-warning mt-2">
-                Bạn cần <a th:href="@{/login}">đăng nhập</a> để mua sản phẩm.
-            </p>
-        </sec:authorize>
-
-    </div>
-
-    <hr>
-
-    <!-- ================= DANH GIÁ ================= -->
-    <h4>Đánh giá sản phẩm</h4>
-
-    <div th:if="${listDanhGia == null || #lists.isEmpty(listDanhGia)}">
-        <p class="text-muted">Chưa có đánh giá nào cho sản phẩm này.</p>
-    </div>
-
-    <div th:each="dg : ${listDanhGia}" class="border rounded p-2 mb-2">
-        <p class="mb-1">
-            <strong th:text="${dg.nguoiDung != null ? dg.nguoiDung.username : 'Người dùng'}"></strong>
-            -
-            <span th:text="${dg.soSao}"></span> ⭐
-        </p>
-        <p th:text="${dg.binhLuan}"></p>
-        <small class="text-muted" th:text="${#temporals.format(dg.thoiGian,'dd/MM/yyyy HH:mm')}"></small>
-    </div>
-
-    <div sec:authorize="isAuthenticated()">
-        <h5>Gửi đánh giá của bạn</h5>
-        <form th:action="@{/sanpham/danhgia/{id}(id=${sp.id})}" method="post" th:object="${newDanhGia}">
-            <div class="mb-2">
-                <label>Số sao</label>
-                <select class="form-select" th:field="*{soSao}" required>
-                    <option th:value="null">-- Chọn --</option>
-                    <option value="1">1 ⭐</option>
-                    <option value="2">2 ⭐</option>
-                    <option value="3">3 ⭐</option>
-                    <option value="4">4 ⭐</option>
-                    <option value="5">5 ⭐</option>
-                </select>
-            </div>
-            <div class="mb-2">
-                <label>Bình luận</label>
-                <textarea class="form-control" th:field="*{binhLuan}" rows="3" required></textarea>
-            </div>
-            <button class="btn btn-primary btn-sm">Gửi đánh giá</button>
-        </form>
-    </div>
-
-    <div sec:authorize="!isAuthenticated()">
-        <p class="text-warning">Bạn cần <a th:href="@{/login}">đăng nhập</a> để đánh giá sản phẩm.</p>
-    </div>
-
-    <hr>
-
-    <div class="mt-3">
-        <a th:href="@{/sanpham}" class="btn btn-secondary">← Quay lại danh sách</a>
+        <div sec:authorize="!isAuthenticated()" class="mt-4 text-center p-4 bg-light rounded shadow-sm">
+            <p class="mb-0">Vui lòng <a th:href="@{/auth/login}" class="text-primary fw-bold">Đăng nhập</a> để gửi nhận xét về sản phẩm.</p>
+        </div>
     </div>
 
 </th:block>

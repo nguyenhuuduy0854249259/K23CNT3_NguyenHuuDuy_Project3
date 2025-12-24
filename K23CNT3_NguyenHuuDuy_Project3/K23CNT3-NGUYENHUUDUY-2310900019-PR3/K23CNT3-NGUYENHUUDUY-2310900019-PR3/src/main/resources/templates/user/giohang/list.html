@@ -53,7 +53,9 @@
 
     <div class="d-flex justify-content-between mt-4">
         <a th:href="@{/}" class="btn btn-secondary">← Tiếp tục mua sắm</a>
-        <a th:href="@{/checkout/list}" class="btn btn-success">Thanh toán</a>
+        <form th:action="@{/checkout}" method="get">
+            <button type="submit">Thanh toán</button>
+        </form>
     </div>
 
 </div>

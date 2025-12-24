@@ -5,56 +5,248 @@
 
 <head>
     <meta charset="UTF-8">
-    <title th:text="${title}">Vật Liệu Xây Dựng</title>
+    <title th:text="${title}">Hệ Thống Vật Liệu Xây Dựng</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
     <style>
-        * { box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
-        body { margin: 0; background-color: #f5f5f5; }
+        :root {
+            --primary: #f4a100;
+            --primary-light: #fff8eb;
+            --primary-dark: #d48c00;
+            --dark-blue: #1e293b;
+            --text-main: #334155;
+            --bg-body: #f1f5f9;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-        header { background-color: #f4a100; padding: 15px 0; }
-        .container { width: 90%; margin: auto; }
-        .header-flex { display: flex; justify-content: space-between; align-items: center; }
-        .logo a { text-decoration: none; color: #000; font-size: 22px; font-weight: bold; }
-        nav a { margin-left: 15px; text-decoration: none; color: #000; font-weight: 500; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
 
-        main { width: 90%; margin: 20px auto; display: flex; gap: 20px; }
+        /* --- MODERN HEADER --- */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e2e8f0;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
 
-        .content-left { width: 260px; }
-        .left-sidebar { background: #fff; border: 1px solid #ddd; padding: 15px; position: sticky; top: 90px; }
+        .header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-        .sidebar-title {
-            font-size: 16px;
-            font-weight: bold;
-            color: #f4a100;
-            border-bottom: 2px solid #f4a100;
-            padding-bottom: 8px;
-            margin-bottom: 12px;
+        .logo a {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-text {
+            color: var(--dark-blue);
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
             text-transform: uppercase;
         }
 
-        .sidebar-menu, .submenu, .submenu-child {
-            list-style: none; padding: 0; margin: 0;
+        .logo-text span { color: var(--primary); }
+
+        nav a {
+            margin-left: 10px;
+            text-decoration: none;
+            color: var(--dark-blue);
+            font-weight: 600;
+            font-size: 14px;
+            padding: 10px 16px;
+            border-radius: 12px;
+            transition: var(--transition);
         }
 
-        .sidebar-menu > li { border-bottom: 1px solid #eee; }
+        nav a:hover {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        /* --- MAIN CONTAINER --- */
+        main {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 35px;
+        }
+
+        /* --- ADVANCED SIDEBAR --- */
+        .content-left {
+            position: relative;
+        }
+
+        .left-sidebar {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            padding: 25px;
+            position: sticky;
+            top: 110px;
+            border: 1px solid #f1f5f9;
+        }
+
+        .sidebar-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--dark-blue);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-title::before {
+            content: '';
+            width: 5px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu > li {
+            margin-bottom: 8px;
+        }
+
         .sidebar-menu a {
-            display: block; padding: 10px;
-            text-decoration: none; color: #333; font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px;
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 600;
+            border-radius: 15px;
+            transition: var(--transition);
+            font-size: 15px;
         }
-        .sidebar-menu a:hover { background-color: #f4a100; color: #000; }
 
-        .submenu { display: none; background: #fafafa; }
-        .sidebar-menu li:hover > .submenu { display: block; }
-        .submenu li a { padding-left: 20px; font-size: 14px; }
+        .sidebar-menu a:hover {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            transform: translateX(5px);
+        }
 
-        .submenu-child { display: none; background: #f1f1f1; }
-        .submenu li:hover > .submenu-child { display: block; }
-        .submenu-child li a { padding-left: 35px; font-size: 13px; color: #555; }
+        /* Dropdown Arrows */
+        .sidebar-menu a::after {
+            font-family: "Font Awesome 6 Free";
+            content: "\f105";
+            font-weight: 900;
+            font-size: 12px;
+            opacity: 0.5;
+            transition: var(--transition);
+        }
 
-        .content-right { flex: 1; background: #fff; padding: 20px; min-height: 400px; }
+        /* Submenu mượt mà */
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            list-style: none;
+            padding-left: 15px;
+            transition: max-height 0.4s cubic-bezier(0, 1, 0, 1);
+            background: #fbfbfb;
+            border-radius: 0 0 15px 15px;
+        }
 
-        footer { background: #333; color: #fff; padding: 15px 0; text-align: center; margin-top: 30px; }
+        .sidebar-menu li:hover .submenu {
+            max-height: 1000px;
+            transition: max-height 0.4s cubic-bezier(1, 0, 1, 0);
+            padding-bottom: 10px;
+        }
+
+        .sidebar-menu li:hover > a {
+            background-color: var(--primary);
+            color: #fff;
+        }
+
+        .sidebar-menu li:hover > a::after {
+            transform: rotate(90deg);
+            color: #fff;
+            opacity: 1;
+        }
+
+        .submenu li a {
+            padding: 10px 15px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+        }
+
+        .submenu li a::after { content: none; }
+
+        .submenu li a:hover {
+            background: none;
+            color: var(--primary);
+            padding-left: 20px;
+        }
+
+        /* --- CONTENT AREA --- */
+        .content-right {
+            background: #fff;
+            padding: 35px;
+            border-radius: 24px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid #f1f5f9;
+            min-height: 700px;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background: var(--dark-blue);
+            color: #f1f5f9;
+            padding: 60px 0 30px;
+            margin-top: 80px;
+            border-radius: 50px 50px 0 0;
+        }
+
+        footer p {
+            margin: 0;
+            opacity: 0.6;
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 1100px) {
+            main { grid-template-columns: 1fr; }
+            .content-left { display: none; } /* Có thể chuyển sang menu mobile */
+        }
+
+        /* Auth Buttons */
+        .btn-auth {
+            padding: 10px 24px !important;
+            border-radius: 14px !important;
+            font-weight: 700 !important;
+            font-size: 13px !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
     </style>
 </head>
 
@@ -63,38 +255,46 @@
 <header>
     <div class="container header-flex">
         <div class="logo">
-            <a th:href="@{/}">🏗️ VẬT LIỆU XÂY DỰNG</a>
+            <a th:href="@{/}">
+                <div style="background: var(--primary); width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+                    <i class="fas fa-hammer"></i>
+                </div>
+                <div class="logo-text">Vật Liệu <span>Xây Dựng</span></div>
+            </a>
         </div>
-        <nav>
-            <a th:href="@{/}">Trang chủ</a>
-            <a th:href="@{/sanpham}">Sản phẩm</a>
-            <a th:href="@{/giohang}">Giỏ hàng</a>
-            <a th:href="@{/lienhe}">Liên hệ</a>
-            <!-- CHƯA ĐĂNG NHẬP -->
-            <a sec:authorize="isAnonymous()" th:href="@{/auth/login}">
-                Đăng nhập
-            </a>
 
-            <!-- ĐÃ ĐĂNG NHẬP -->
-            <a sec:authorize="isAuthenticated()" th:href="@{/auth/logout}">
-                Đăng xuất
+        <nav class="d-flex align-items-center">
+            <a th:href="@{/}"><i class="fas fa-home me-1"></i> Trang chủ</a>
+            <a th:href="@{/sanpham}"><i class="fas fa-box-open me-1"></i> Sản phẩm</a>
+            <a th:href="@{/giohang}" class="position-relative">
+                <i class="fas fa-shopping-cart me-1"></i> Giỏ hàng
             </a>
+            <a th:href="@{/donhang}"><i class="fas fa-file-invoice me-1"></i> Đơn hàng</a>
+            <a th:href="@{/lienhe}"><i class="fas fa-phone-alt me-1"></i> Liên hệ</a>
+
+            <div class="ms-4 ps-4 border-start">
+                <a sec:authorize="isAnonymous()" th:href="@{/auth/login}"
+                   class="btn btn-warning btn-auth text-white">
+                    <i class="fas fa-sign-in-alt me-2"></i> Đăng nhập
+                </a>
+
+                <a sec:authorize="isAuthenticated()" th:href="@{/auth/logout}"
+                   class="btn btn-danger btn-auth text-white">
+                    <i class="fas fa-sign-out-alt me-2"></i> Đăng xuất
+                </a>
+            </div>
         </nav>
     </div>
 </header>
 
 <main>
-
-    <!-- SIDEBAR LEFT -->
-    <div class="content-left">
+    <aside class="content-left">
         <div class="left-sidebar">
-            <div class="sidebar-title">Danh mục</div>
+            <div class="sidebar-title">Danh mục sản phẩm</div>
 
             <ul class="sidebar-menu">
-
-                <!-- XI MĂNG -->
                 <li>
-                    <a th:href="@{/sanpham(danhMucId=1)}">Xi măng</a>
+                    <a th:href="@{/sanpham(danhMucId=1)}">Xi măng các loại</a>
                     <ul class="submenu">
                         <li><a th:href="@{/sanpham(danhMucId=2)}">Xi măng Hà Tiên</a></li>
                         <li><a th:href="@{/sanpham(danhMucId=3)}">Xi măng Holcim</a></li>
@@ -102,69 +302,84 @@
                     </ul>
                 </li>
 
-                <!-- SẮT THÉP -->
                 <li>
-                    <a th:href="@{/sanpham(danhMucId=5)}">Sắt thép</a>
+                    <a th:href="@{/sanpham(danhMucId=5)}">Sắt thép xây dựng</a>
                     <ul class="submenu">
-                        <li>
-                            <a th:href="@{/sanpham(danhMucId=6)}">Thép thương mại</a>
-                            <ul class="submenu-child">
-                                <li><a th:href="@{/sanpham(danhMucId=7)}">Thép hộp</a></li>
-                                <li><a th:href="@{/sanpham(danhMucId=8)}">Thép hình</a></li>
-                                <li><a th:href="@{/sanpham(danhMucId=9)}">Thép ống</a></li>
-                            </ul>
-                        </li>
-                        <li><a th:href="@{/sanpham(danhMucId=10)}">Thép xây dựng</a></li>
+                        <li><a th:href="@{/sanpham(danhMucId=10)}">Thép Việt Nhật</a></li>
+                        <li><a th:href="@{/sanpham(danhMucId=6)}">Thép Hòa Phát</a></li>
+                        <li><a th:href="@{/sanpham(danhMucId=7)}">Thép Pomina</a></li>
                     </ul>
                 </li>
 
-                <!-- TÔN -->
                 <li>
-                    <a th:href="@{/sanpham(danhMucId=11)}">Tôn lợp</a>
+                    <a th:href="@{/sanpham(danhMucId=11)}">Tôn lợp hệ thống</a>
                     <ul class="submenu">
-                        <li><a th:href="@{/sanpham(danhMucId=12)}">Tôn lạnh</a></li>
-                        <li><a th:href="@{/sanpham(danhMucId=13)}">Tôn cách nhiệt</a></li>
-                        <li><a th:href="@{/sanpham(danhMucId=14)}">Tôn mạ màu</a></li>
+                        <li><a th:href="@{/sanpham(danhMucId=12)}">Tôn lạnh màu</a></li>
+                        <li><a th:href="@{/sanpham(danhMucId=13)}">Tôn cách nhiệt PU</a></li>
                     </ul>
                 </li>
 
-                <!-- GẠCH -->
                 <li>
-                    <a th:href="@{/sanpham(danhMucId=15)}">Gạch – Đá</a>
+                    <a th:href="@{/sanpham(danhMucId=15)}">Gạch & Đá xây dựng</a>
                     <ul class="submenu">
-                        <li>
-                            <a th:href="@{/sanpham(danhMucId=16)}">Gạch ốp lát</a>
-                            <ul class="submenu-child">
-                                <li><a th:href="@{/sanpham(danhMucId=17)}">Gạch men</a></li>
-                                <li><a th:href="@{/sanpham(danhMucId=18)}">Gạch granite</a></li>
-                            </ul>
-                        </li>
-                        <li><a th:href="@{/sanpham(danhMucId=19)}">Đá xây dựng</a></li>
+                        <li><a th:href="@{/sanpham(danhMucId=17)}">Gạch ống tiêu chuẩn</a></li>
+                        <li><a th:href="@{/sanpham(danhMucId=18)}">Gạch thẻ các loại</a></li>
                     </ul>
                 </li>
-
             </ul>
+
+            <div class="mt-5 p-4 bg-light rounded-4 border border-dashed text-center">
+                <i class="fas fa-headset fa-2x text-warning mb-3"></i>
+                <h6 class="fw-bold">Hỗ trợ 24/7</h6>
+                <p class="small text-muted mb-0">Liên hệ ngay nếu bạn cần tư vấn vật tư</p>
+                <div class="fw-bold text-primary mt-2">1900.123.XXX</div>
+            </div>
         </div>
-    </div>
+    </aside>
 
-    <!-- CONTENT RIGHT -->
-    <div class="content-right">
+    <section class="content-right">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none text-muted">Trang chủ</a></li>
+                <li class="breadcrumb-item active fw-bold" th:text="${title}">Danh mục</li>
+            </ol>
+        </nav>
+
         <th:block th:replace="${content}"></th:block>
-    </div>
-
+    </section>
 </main>
 
 <footer>
-    <p>© 2025 Vật Liệu Xây Dựng</p>
+    <div class="container">
+        <div class="row mb-5 text-start">
+            <div class="col-md-4">
+                <h5 class="fw-bold mb-4">Về chúng tôi</h5>
+                <p class="small">Chuyên cung cấp các loại vật liệu xây dựng chính hãng, chất lượng cao từ các thương hiệu hàng đầu Việt Nam.</p>
+            </div>
+            <div class="col-md-4">
+                <h5 class="fw-bold mb-4">Liên kết nhanh</h5>
+                <ul class="list-unstyled small opacity-75">
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Chính sách giao hàng</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Bảo hành sản phẩm</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Điều khoản dịch vụ</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5 class="fw-bold mb-4">Đăng ký nhận tin</h5>
+                <div class="input-group">
+                    <input type="text" class="form-control bg-transparent border-secondary text-white" placeholder="Email của bạn">
+                    <button class="btn btn-warning text-white">Gửi</button>
+                </div>
+            </div>
+        </div>
+        <hr class="border-secondary">
+        <p class="mt-4">© 2025 Hệ thống Quản lý Vật Liệu Xây Dựng - Design by Gemini</p>
+    </div>
 </footer>
 
 <th:block th:replace="${customScripts}"></th:block>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet">
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
 
 </body>
 </html>

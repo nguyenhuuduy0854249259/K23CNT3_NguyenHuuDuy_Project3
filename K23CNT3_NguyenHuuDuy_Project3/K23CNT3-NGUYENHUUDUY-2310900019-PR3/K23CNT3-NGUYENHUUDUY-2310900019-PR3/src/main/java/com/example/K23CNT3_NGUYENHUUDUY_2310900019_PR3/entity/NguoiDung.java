@@ -4,16 +4,17 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 import java.util.Set;
 
 @Entity
 @Table(name = "nguoi_dung")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor @Builder
-public class NguoiDung {
+public class NguoiDung implements UserDetails { // Implement UserDetails chuẩn Spring Security
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +33,6 @@ public class NguoiDung {
 
     private boolean kichHoat = true;
 
-    // ✅ ĐẶT ĐÚNG VỊ TRÍ
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "nguoi_dung_vai_tro",
@@ -41,11 +41,42 @@ public class NguoiDung {
     )
     private Set<VaiTro> vaiTros;
 
-    // ✅ LẤY ROLE TỪ DATABASE
+    // --- QUAN TRỌNG: Setter thủ công cho mật khẩu ---
+    public void setMatKhau(String matKhau) {
+        this.matKhau = matKhau;
+    }
+
+    public String getMatKhau() {
+        return this.matKhau;
+    }
+
+    // --- QUAN TRỌNG: Xử lý quyền hạn tránh lỗi Null ---
+    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (vaiTros == null) {
+            return Collections.emptyList();
+        }
         return vaiTros.stream()
                 .map(vt -> new SimpleGrantedAuthority(vt.getTen()))
                 .toList();
     }
-}
 
+    @Override
+    public String getPassword() {
+        return this.matKhau;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.tenDangNhap;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() { return true; }
+    @Override
+    public boolean isAccountNonLocked() { return true; }
+    @Override
+    public boolean isCredentialsNonExpired() { return true; }
+    @Override
+    public boolean isEnabled() { return kichHoat; }
+}

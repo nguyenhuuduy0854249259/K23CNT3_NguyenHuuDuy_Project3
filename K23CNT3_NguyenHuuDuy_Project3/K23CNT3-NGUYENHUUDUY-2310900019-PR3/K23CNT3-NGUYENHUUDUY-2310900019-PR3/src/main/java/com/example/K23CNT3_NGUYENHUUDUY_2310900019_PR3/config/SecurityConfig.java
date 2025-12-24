@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -20,7 +21,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return NoOpPasswordEncoder.getInstance();
     }
 
     @Bean
@@ -37,22 +38,26 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .userDetailsService(customUserDetailsService)
                 .authorizeHttpRequests(auth -> auth
-                        // PUBLIC
+                        // 1. Cấu hình ADMIN (Phải để lên trên cùng)
+                        .requestMatchers("/admin/**", "/lienhe/admin/**").hasRole("ADMIN")
+
+                        // 2. Cấu hình GIỎ HÀNG & THANH TOÁN (Yêu cầu đăng nhập)
+                        .requestMatchers("/giohang/**", "/checkout/**", "/donhang/**").authenticated()
+
+                        // 3. Cấu hình PUBLIC (Ai cũng vào được)
                         .requestMatchers(
                                 "/",
                                 "/home",
                                 "/sanpham/**",
-                                "/lienhe/**",
+                                "/lienhe/**", // Bao gồm /lienhe và /lienhe/gui
                                 "/auth/login",
                                 "/auth/register",
                                 "/css/**",
                                 "/js/**",
-                                "/images/**"
+                                "/images/**",
+                                "/uploads/**"
                         ).permitAll()
-                        // GIỎ HÀNG
-                        .requestMatchers("/giohang/**").authenticated()
-                        // ADMIN
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -60,7 +65,18 @@ public class SecurityConfig {
                         .loginProcessingUrl("/auth/do-login")
                         .usernameParameter("username")
                         .passwordParameter("password")
-                        .defaultSuccessUrl("/", true)
+                        .successHandler((request, response, authentication) -> {
+                            // Logic điều hướng thông minh sau khi đăng nhập
+                            var authorities = authentication.getAuthorities();
+                            boolean isAdmin = authorities.stream()
+                                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+                            if (isAdmin) {
+                                response.sendRedirect("/admin"); // Admin vào quản lý đơn hàng
+                            } else {
+                                response.sendRedirect("/"); // User về trang chủ
+                            }
+                        })
                         .failureUrl("/auth/login?error")
                         .permitAll()
                 )

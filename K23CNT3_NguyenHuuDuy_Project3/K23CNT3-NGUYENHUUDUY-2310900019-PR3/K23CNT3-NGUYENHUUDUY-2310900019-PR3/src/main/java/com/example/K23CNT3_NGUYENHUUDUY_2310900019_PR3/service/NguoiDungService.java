@@ -40,8 +40,8 @@ public class NguoiDungService {
         user.setMatKhau(passwordEncoder.encode(user.getMatKhau()));
 
         // gán ROLE_USER mặc định
-        VaiTro roleUser = vaiTroRepository.findByTen("ROLE_USER")
-                .orElseThrow(() -> new RuntimeException("Chưa có ROLE_USER trong database"));
+        VaiTro roleUser = vaiTroRepository.findByTen("USER")
+                .orElseThrow(() -> new RuntimeException("Chưa có USER trong database"));
 
         user.setVaiTros(Set.of(roleUser));
 

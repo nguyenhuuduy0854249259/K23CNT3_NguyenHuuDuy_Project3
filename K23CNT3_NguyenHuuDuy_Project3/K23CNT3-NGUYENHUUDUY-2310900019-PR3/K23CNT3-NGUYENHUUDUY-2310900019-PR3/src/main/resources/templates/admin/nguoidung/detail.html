@@ -1,18 +1,193 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="admin/layout/header :: admin_head"></head>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout/header :: admin_head}">
+    <title>Hồ sơ người dùng | Admin</title>
+</head>
+
+<style>
+    :root {
+        --primary-color: #4e73df;
+        --secondary-bg: #f8f9fc;
+        --text-label: #4e73df;
+        --text-content: #5a5c69;
+    }
+
+    body {
+        background-color: #f0f2f5;
+        font-family: 'Inter', sans-serif;
+        color: var(--text-content);
+    }
+
+    .profile-container {
+        max-width: 700px;
+        margin: 50px auto;
+    }
+
+    /* --- PROFILE CARD --- */
+    .profile-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        border: none;
+        overflow: hidden;
+    }
+
+    .profile-header {
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+        padding: 40px 30px;
+        text-align: center;
+        color: white;
+    }
+
+    .avatar-placeholder {
+        width: 100px;
+        height: 100px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        font-weight: 700;
+        margin: 0 auto 15px;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .profile-header h3 {
+        margin: 0;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    /* --- INFO SECTION --- */
+    .info-section {
+        padding: 30px 40px;
+    }
+
+    .info-row {
+        display: flex;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-icon {
+        width: 45px;
+        height: 45px;
+        background: #f8f9fc;
+        color: var(--primary-color);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        margin-right: 20px;
+    }
+
+    .info-label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #b7b9cc;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+    }
+
+    .info-value {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #2e59d9;
+    }
+
+    /* --- ACTIONS --- */
+    .profile-footer {
+        background: #f8f9fc;
+        padding: 20px 40px;
+        text-align: right;
+    }
+
+    .btn-back {
+        text-decoration: none;
+        color: #858796;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-back:hover {
+        color: var(--primary-color);
+    }
+
+    /* --- ROLE BADGE --- */
+    .role-badge {
+        padding: 4px 12px;
+        background: #eef2ff;
+        color: #4338ca;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 700;
+    }
+</style>
 
 <body>
-<div th:replace="admin/layout/header :: admin_navbar"></div>
 
-<h2>Chi tiết người dùng</h2>
+<div th:replace="~{admin/layout/header :: admin_navbar}"></div>
 
-<p><b>ID:</b> <span th:text="${user.id}"></span></p>
-<p><b>Tên đăng nhập:</b> <span th:text="${user.tenDangNhap}"></span></p>
-<p><b>Email:</b> <span th:text="${user.email}"></span></p>
-<p><b>Vai trò:</b> <span th:text="${user.vaiTros}"></span></p>
+<div class="container profile-container">
+    <div class="profile-card">
 
-<a th:href="@{/admin/nguoidung}">← Quay lại</a>
+        <div class="profile-header">
+            <div class="avatar-placeholder" th:text="${#strings.substring(user.tenDangNhap,0,1).toUpperCase()}">U</div>
+            <h3 th:text="${user.tenDangNhap}">Tên người dùng</h3>
+            <span class="opacity-75 small">ID Hệ thống: #<span th:text="${user.id}"></span></span>
+        </div>
+
+        <div class="info-section">
+
+            <div class="info-row">
+                <div class="info-icon"><i class="fas fa-envelope"></i></div>
+                <div>
+                    <div class="info-label">Địa chỉ Email</div>
+                    <div class="info-value" th:text="${user.email}">user@example.com</div>
+                </div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-icon"><i class="fas fa-user-circle"></i></div>
+                <div>
+                    <div class="info-label">Tên tài khoản</div>
+                    <div class="info-value" th:text="${user.tenDangNhap}">username</div>
+                </div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-icon"><i class="fas fa-user-shield"></i></div>
+                <div>
+                    <div class="info-label">Quyền hạn / Vai trò</div>
+                    <div class="info-value">
+                        <span class="role-badge" th:text="${user.vaiTros}">ADMIN</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="profile-footer">
+            <a th:href="@{/admin/nguoidung}" class="btn-back">
+                <i class="fas fa-chevron-left"></i> Quay lại danh sách
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
 
 </body>
 </html>
