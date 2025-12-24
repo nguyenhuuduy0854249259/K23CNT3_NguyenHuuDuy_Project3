@@ -20,4 +20,23 @@ public class DanhGiaService {
     public DanhGia save(DanhGia dg) {
         return danhGiaRepository.save(dg);
     }
+
+    public List<DanhGia> getAll() {
+        return danhGiaRepository.findAllByOrderByThoiGianDesc();
+    }
+
+    public List<DanhGia> getChuaDuyet() {
+        return danhGiaRepository.findByDaDuyetFalseOrderByThoiGianDesc();
+    }
+
+    public void duyet(Long id) {
+        danhGiaRepository.findById(id).ifPresent(dg -> {
+            dg.setDaDuyet(true);
+            danhGiaRepository.save(dg);
+        });
+    }
+
+    public void xoa(Long id) {
+        danhGiaRepository.deleteById(id);
+    }
 }

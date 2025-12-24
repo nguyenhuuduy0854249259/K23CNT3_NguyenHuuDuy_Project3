@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,104 +29,73 @@ public class SanPhamController {
     private final DanhGiaRepository danhGiaRepository;
     private final NguoiDungRepository nguoiDungRepository;
 
-    // ==========================================
-    // 1. DANH SÁCH SẢN PHẨM + LỌC (DANH MỤC & THƯƠNG HIỆU)
-    // ==========================================
     @GetMapping
-    public String list(
-            @RequestParam(required = false) Long danhMucId,
-            @RequestParam(required = false) Long thuongHieuId,
-            Model model
-    ) {
-        // Xử lý lọc đa năng
+    public String list(@RequestParam(required = false) Long danhMucId,
+                       @RequestParam(required = false) Long thuongHieuId,
+                       Model model) {
+        // QUAN TRỌNG: Nạp danh mục cho Sidebar
+        model.addAttribute("dsDanhMuc", danhMucRepository.findAll());
+
+        String title = "Tất cả sản phẩm";
         if (thuongHieuId != null) {
-            // Lọc theo thương hiệu từ Slider trang chủ
             model.addAttribute("list", sanPhamService.findByThuongHieu(thuongHieuId));
+            title = "Sản phẩm theo thương hiệu";
         } else if (danhMucId != null) {
-            // Lọc theo danh mục từ Sidebar bên trái
             model.addAttribute("list", sanPhamRepository.findByDanhMuc_Id(danhMucId));
+            title = danhMucRepository.findById(danhMucId).map(dm -> dm.getTen()).orElse("Danh mục");
         } else {
-            // Mặc định hiển thị tất cả
             model.addAttribute("list", sanPhamRepository.findAll());
         }
-
-        // Luôn gửi danh sách danh mục để hiện ở Sidebar
-        model.addAttribute("dsDanhMuc", danhMucRepository.findAll());
-        model.addAttribute("title", "Danh sách sản phẩm");
-
+        model.addAttribute("title", title);
         return "user/sanpham/list";
     }
 
-    // ==========================================
-    // 2. CHI TIẾT SẢN PHẨM + ĐÁNH GIÁ
-    // ==========================================
     @GetMapping("/{id}")
-    public String detail(@PathVariable Long id,
-                         Authentication authentication,
-                         Model model) {
+    public String detail(@PathVariable Long id, Authentication authentication, Model model) {
+        // QUAN TRỌNG: Nạp danh mục cho Sidebar
+        model.addAttribute("dsDanhMuc", danhMucRepository.findAll());
 
-        return sanPhamRepository.findById(id)
-                .map(sp -> {
-                    model.addAttribute("sp", sp);
+        return sanPhamRepository.findById(id).map(sp -> {
+            model.addAttribute("sp", sp);
+            model.addAttribute("listDanhGia", danhGiaRepository.findBySanPham_IdAndDaDuyetTrueOrderByThoiGianDesc(id));
+            model.addAttribute("avgStar", danhGiaRepository.tinhSaoTrungBinh(id));
 
-                    // Danh sách đánh giá đã duyệt
-                    List<DanhGia> listDanhGia =
-                            danhGiaRepository.findBySanPham_IdAndDaDuyetTrueOrderByThoiGianDesc(id);
-                    model.addAttribute("listDanhGia", listDanhGia);
-
-                    // Sao trung bình
-                    Double avgStar = danhGiaRepository.tinhSaoTrungBinh(id);
-                    model.addAttribute("avgStar", avgStar);
-
-                    // Kiểm tra trạng thái đánh giá của User hiện tại
-                    boolean daDanhGia = false;
-                    if (authentication != null) {
-                        nguoiDungRepository.findByUsername(authentication.getName())
-                                .ifPresent(user -> {
-                                    model.addAttribute("user", user);
-                                });
-
-                        NguoiDung user = nguoiDungRepository.findByUsername(authentication.getName()).orElse(null);
-                        if (user != null) {
-                            daDanhGia = danhGiaRepository.existsBySanPham_IdAndNguoiDung_Id(id, user.getId());
-                        }
-                    }
-
-                    model.addAttribute("daDanhGia", daDanhGia);
-                    model.addAttribute("newDanhGia", new DanhGia());
-
-                    return "user/sanpham/detail";
-                })
-                .orElse("redirect:/sanpham?notfound");
+            boolean daDanhGia = false;
+            if (authentication != null) {
+                NguoiDung user = nguoiDungRepository.findByUsername(authentication.getName()).orElse(null);
+                if (user != null) {
+                    daDanhGia = danhGiaRepository.existsBySanPham_IdAndNguoiDung_Id(id, user.getId());
+                    model.addAttribute("user", user);
+                }
+            }
+            model.addAttribute("daDanhGia", daDanhGia);
+            model.addAttribute("newDanhGia", new DanhGia());
+            return "user/sanpham/detail";
+        }).orElse("redirect:/sanpham?notfound");
     }
 
-    // ==========================================
-    // 3. GỬI ĐÁNH GIÁ (POST)
-    // ==========================================
     @PostMapping("/danhgia/{id}")
     public String submitDanhGia(@PathVariable Long id,
                                 @ModelAttribute("newDanhGia") DanhGia danhGia,
-                                Authentication authentication) {
-
+                                Authentication authentication,
+                                RedirectAttributes ra) {
         if (authentication == null) return "redirect:/auth/login";
 
         SanPham sanPham = sanPhamRepository.findById(id).orElse(null);
         NguoiDung nguoiDung = nguoiDungRepository.findByUsername(authentication.getName()).orElse(null);
 
-        if (sanPham == null || nguoiDung == null) return "redirect:/sanpham";
-
-        // Chặn đánh giá trùng
-        if (danhGiaRepository.existsBySanPham_IdAndNguoiDung_Id(id, nguoiDung.getId())) {
-            return "redirect:/sanpham/" + id + "?rated";
+        if (sanPham != null && nguoiDung != null) {
+            if (danhGiaRepository.existsBySanPham_IdAndNguoiDung_Id(id, nguoiDung.getId())) {
+                ra.addFlashAttribute("error", "Bạn đã gửi đánh giá cho sản phẩm này rồi.");
+            } else {
+                danhGia.setSanPham(sanPham);
+                danhGia.setNguoiDung(nguoiDung);
+                danhGia.setThoiGian(LocalDateTime.now());
+                danhGia.setDaDuyet(true);
+                danhGiaRepository.save(danhGia);
+                ra.addFlashAttribute("message", "Cảm ơn bạn đã đánh giá!");
+            }
         }
-
-        danhGia.setSanPham(sanPham);
-        danhGia.setNguoiDung(nguoiDung);
-        danhGia.setThoiGian(LocalDateTime.now());
-        danhGia.setDaDuyet(false); // Chờ Admin duyệt
-
-        danhGiaRepository.save(danhGia);
-
-        return "redirect:/sanpham/" + id + "?success";
+        return "redirect:/sanpham/" + id;
     }
 }

@@ -1,21 +1,29 @@
 package com.example.K23CNT3_NGUYENHUUDUY_2310900019_PR3.Controller.Admin;
 
+import com.example.K23CNT3_NGUYENHUUDUY_2310900019_PR3.entity.DanhGia;
+import com.example.K23CNT3_NGUYENHUUDUY_2310900019_PR3.entity.NguoiDung;
 import com.example.K23CNT3_NGUYENHUUDUY_2310900019_PR3.entity.SanPham;
+import com.example.K23CNT3_NGUYENHUUDUY_2310900019_PR3.repository.DanhGiaRepository;
+import com.example.K23CNT3_NGUYENHUUDUY_2310900019_PR3.repository.NguoiDungRepository;
+import com.example.K23CNT3_NGUYENHUUDUY_2310900019_PR3.repository.SanPhamRepository;
 import com.example.K23CNT3_NGUYENHUUDUY_2310900019_PR3.service.DanhMucService;
 import com.example.K23CNT3_NGUYENHUUDUY_2310900019_PR3.service.SanPhamService;
 import com.example.K23CNT3_NGUYENHUUDUY_2310900019_PR3.service.ThuongHieuService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Controller
@@ -24,8 +32,11 @@ import java.util.UUID;
 public class AdminSanPhamController {
 
     private final SanPhamService sanPhamService;
+    private final SanPhamRepository sanPhamRepository;
     private final DanhMucService danhMucService;
     private final ThuongHieuService thuongHieuService;
+    private final NguoiDungRepository nguoiDungRepository;
+    private final DanhGiaRepository danhGiaRepository;
 
     // Lấy giá trị từ application.properties
     @Value("${upload.dir}")
@@ -139,4 +150,43 @@ public class AdminSanPhamController {
         sanPhamService.delete(id);
         return "redirect:/admin/sanpham/list";
     }
+    // ==========================================
+    // 3. GỬI ĐÁNH GIÁ (POST)
+    // ==========================================
+    // Sửa lại hàm PostMapping một chút
+//    @PostMapping("/danhgia/{id}")
+//    public String submitDanhGia(@PathVariable Long id,
+//                                @ModelAttribute("newDanhGia") DanhGia danhGia,
+//                                Authentication authentication,
+//                                RedirectAttributes ra) {
+//
+//        if (authentication == null) return "redirect:/auth/login";
+//
+//        SanPham sanPham = sanPhamRepository.findById(id).orElse(null);
+//        NguoiDung nguoiDung = nguoiDungRepository.findByUsername(authentication.getName()).orElse(null);
+//
+//        if (sanPham != null && nguoiDung != null) {
+//            // 1. Chặn đánh giá trùng lặp
+//            if (danhGiaRepository.existsBySanPham_IdAndNguoiDung_Id(id, nguoiDung.getId())) {
+//                ra.addFlashAttribute("error", "Bạn đã gửi đánh giá cho sản phẩm này trước đó.");
+//                return "redirect:/sanpham/" + id;
+//            }
+//
+//            // 2. Gán dữ liệu
+//            danhGia.setSanPham(sanPham);
+//            danhGia.setNguoiDung(nguoiDung);
+//            danhGia.setThoiGian(LocalDateTime.now());
+//            danhGia.setDaDuyet(true); // Hiển thị ngay
+//
+//            // 3. Lưu
+//            try {
+//                danhGiaRepository.save(danhGia);
+//                ra.addFlashAttribute("message", "Đánh giá của bạn đã được đăng thành công!");
+//            } catch (Exception e) {
+//                ra.addFlashAttribute("error", "Có lỗi xảy ra, vui lòng thử lại sau.");
+//            }
+//        }
+//
+//        return "redirect:/sanpham/" + id;
+//    }
 }

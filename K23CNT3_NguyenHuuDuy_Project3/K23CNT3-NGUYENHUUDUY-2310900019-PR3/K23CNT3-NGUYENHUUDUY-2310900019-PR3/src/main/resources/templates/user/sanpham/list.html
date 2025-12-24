@@ -113,7 +113,7 @@
             <div class="card h-100 product-card shadow-sm">
 
                 <div class="product-img-container">
-                    <img th:src="${sp.hinhAnh != null && sp.hinhAnh != ''} ? @{/images/{img}(img=${sp.hinhAnh})} : @{/images/no-image.png}"
+                    <img th:src="${sp.hinhAnh != null && sp.hinhAnh != ''} ? @{/uploads/{img}(img=${sp.hinhAnh})} : @{/images/no-image.png}"
                          class="card-img-top"
                          alt="Ảnh sản phẩm"
                          style="height:200px; object-fit:cover">

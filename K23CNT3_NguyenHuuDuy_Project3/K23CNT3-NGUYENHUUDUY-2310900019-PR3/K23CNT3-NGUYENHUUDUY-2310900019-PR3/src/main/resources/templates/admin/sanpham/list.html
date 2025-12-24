@@ -4,7 +4,6 @@
 <head th:replace="~{admin/layout/header :: admin_head}"></head>
 
 <style>
-    /* Giữ nguyên CSS của bạn vì nó đã khá ổn */
     body { background-color: #f4f6f9; font-family: Arial, Helvetica, sans-serif; }
     h2 { font-weight: 700; margin: 20px 0; color: #2c3e50; }
     .btn-add { background: linear-gradient(135deg, #4e73df, #224abe); color: #fff; padding: 8px 14px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px; }
@@ -14,9 +13,17 @@
     th, td { padding: 12px 10px; text-align: center; vertical-align: middle; font-size: 14px; }
     tbody tr:nth-child(even) { background-color: #f8f9fc; }
     tbody tr:hover { background-color: #eef1f7; }
-    /* Style cho ảnh thumbnail */
-    .img-thumb { width: 70px; height: 70px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd; }
-    .btn-action { margin: 0 3px; }
+    .img-thumb { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd; }
+
+    /* Cải tiến các nút hành động */
+    .btn-action {
+        margin: 2px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+        padding: 5px 10px;
+    }
 </style>
 
 <body>
@@ -42,7 +49,7 @@
                     <th>Danh mục / Thương hiệu</th>
                     <th>Giá bán</th>
                     <th>Tồn kho</th>
-                    <th>Hành động</th>
+                    <th style="width: 250px;">Hành động</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -52,7 +59,6 @@
                         <img th:if="${sp.hinhAnh != null and sp.hinhAnh != ''}"
                              th:src="@{'/uploads/' + ${sp.hinhAnh}}"
                              class="img-thumb" alt="Sản phẩm">
-
                         <img th:unless="${sp.hinhAnh != null and sp.hinhAnh != ''}"
                              src="https://via.placeholder.com/70x70?text=No+Img"
                              class="img-thumb" alt="Không có ảnh">
@@ -70,14 +76,19 @@
                         <span th:classappend="${sp.soLuongTon < 5} ? 'badge bg-danger' : 'badge bg-success'"
                               th:text="${sp.soLuongTon}"></span>
                     </td>
-                    <td>
-                        <a th:href="@{/admin/sanpham/edit/{id}(id=${sp.id})}" class="btn btn-sm btn-warning btn-action">
-                            <i class="bi bi-pencil-square"></i>Sửa
+                    <td class="text-nowrap">
+                        <a th:href="@{/admin/danhgia/sanpham/{id}(id=${sp.id})}" class="btn btn-sm btn-info text-white btn-action">
+                            <i class="bi bi-star-fill"></i> Đánh giá
                         </a>
+
+                        <a th:href="@{/admin/sanpham/edit/{id}(id=${sp.id})}" class="btn btn-sm btn-warning btn-action">
+                            <i class="bi bi-pencil-square"></i> Sửa
+                        </a>
+
                         <a th:href="@{/admin/sanpham/delete/{id}(id=${sp.id})}"
                            class="btn btn-sm btn-danger btn-action"
-                           onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này? Hành động này không thể hoàn tác!')">
-                            <i class="bi bi-trash"></i>Xoá
+                           onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')">
+                            <i class="bi bi-trash"></i> Xoá
                         </a>
                     </td>
                 </tr>

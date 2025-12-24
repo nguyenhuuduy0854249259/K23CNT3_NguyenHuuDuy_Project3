@@ -1,19 +1,240 @@
-<h2>Quản lý đánh giá</h2>
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout/header :: admin_head}">
+    <title th:text="${title}">Quản lý đánh giá</title>
+</head>
 
-<table class="table table-bordered">
-    <tr>
-        <th>Sản phẩm</th>
-        <th>Số sao</th>
-        <th>Bình luận</th>
-        <th>Hành động</th>
-    </tr>
+<style>
+    :root {
+        --primary-color: #4e73df;
+        --bg-body: #f8f9fc;
+        --star-color: #f6c23e;
+    }
 
-    <tr th:each="dg : ${list}">
-        <td th:text="${dg.sanPham.ten}"></td>
-        <td th:text="${dg.soSao}"></td>
-        <td th:text="${dg.binhLuan}"></td>
-        <td>
-            <a th:href="@{/admin/danhgia/xoa/{id}(id=${dg.id})}">Xóa</a>
-        </td>
-    </tr>
-</table>
+    body {
+        background-color: var(--bg-body);
+        font-family: 'Inter', sans-serif;
+        color: #5a5c69;
+    }
+
+    .main-content {
+        padding: 30px;
+    }
+
+    /* --- PAGE HEADER --- */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .page-title {
+        font-weight: 800;
+        color: var(--primary-color);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    /* --- TABLE CARD --- */
+    .review-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.08);
+        border: none;
+        overflow: hidden;
+    }
+
+    .table {
+        margin-bottom: 0;
+        vertical-align: middle;
+    }
+
+    .table thead {
+        background-color: #f1f4f9;
+    }
+
+    .table thead th {
+        font-weight: 700;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        color: #6e707e;
+        padding: 15px 20px;
+        border: none;
+    }
+
+    .table tbody tr {
+        transition: all 0.2s ease;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f8f9fc;
+    }
+
+    .table tbody td {
+        padding: 18px 20px;
+        border-bottom: 1px solid #eff2f7;
+    }
+
+    /* --- REVIEW CONTENT --- */
+    .customer-name {
+        font-weight: 700;
+        color: #3a3b45;
+        display: block;
+    }
+
+    .product-name {
+        color: #858796;
+        font-size: 0.85rem;
+        max-width: 200px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+    }
+
+    .comment-text {
+        font-style: italic;
+        color: #5a5c69;
+        max-width: 300px;
+        line-height: 1.4;
+    }
+
+    .star-rating {
+        color: var(--star-color);
+        letter-spacing: 2px;
+        font-size: 0.9rem;
+    }
+
+    /* --- STATUS BADGE --- */
+    .badge-status {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.75rem;
+        display: inline-block;
+    }
+    .status-approved { background: #e1f7ed; color: #0ca678; }
+    .status-pending { background: #fff4e6; color: #f08c00; }
+
+    /* --- ACTION BUTTONS --- */
+    .btn-action {
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        padding: 6px 12px;
+        transition: all 0.2s;
+    }
+
+    .btn-approve {
+        background-color: #e7f5ff;
+        color: #228be6;
+        border: 1px solid #d0ebff;
+    }
+
+    .btn-approve:hover {
+        background-color: #228be6;
+        color: white;
+    }
+
+    .btn-delete {
+        background-color: #fff5f5;
+        color: #fa5252;
+        border: 1px solid #ffe3e3;
+    }
+
+    .btn-delete:hover {
+        background-color: #fa5252;
+        color: white;
+    }
+</style>
+
+<body>
+
+<div th:replace="~{admin/layout/header :: admin_navbar}"></div>
+
+<div class="main-content">
+    <div class="container-fluid">
+
+        <div class="page-header">
+            <h2 class="page-title">
+                <i class="bi bi-star-half"></i> Quản lý đánh giá
+            </h2>
+            <a th:href="@{/admin/sanpham}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                <i class="bi bi-arrow-left"></i> Quay lại sản phẩm
+            </a>
+        </div>
+
+        <div class="review-card">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Khách hàng & Sản phẩm</th>
+                        <th>Mức độ</th>
+                        <th>Nội dung bình luận</th>
+                        <th>Ngày gửi</th>
+                        <th class="text-center">Trạng thái</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="dg : ${dsDanhGia}">
+                        <td>
+                            <span class="customer-name" th:text="${dg.nguoiDung.hoTen}">Tên khách</span>
+                            <span class="product-name" th:title="${dg.sanPham.tenSanPham}" th:text="${dg.sanPham.tenSanPham}">Tên sản phẩm</span>
+                        </td>
+                        <td>
+                            <div class="star-rating">
+                                <i class="bi bi-star-fill" th:each="i : ${#numbers.sequence(1, dg.soSao)}"></i>
+                                <i class="bi bi-star text-light" th:if="${dg.soSao < 5}" th:each="i : ${#numbers.sequence(1, 5 - dg.soSao)}"></i>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="comment-text" th:text="${dg.binhLuan}">Nội dung đánh giá...</div>
+                        </td>
+                        <td>
+                            <span class="text-muted small" th:text="${#temporals.format(dg.thoiGian, 'dd/MM/yyyy HH:mm')}">01/01/2024</span>
+                        </td>
+                        <td class="text-center">
+                                <span th:if="${dg.daDuyet}" class="badge-status status-approved">
+                                    <i class="bi bi-check-circle-fill me-1"></i> Đã duyệt
+                                </span>
+                            <span th:unless="${dg.daDuyet}" class="badge-status status-pending">
+                                    <i class="bi bi-clock-history me-1"></i> Chờ duyệt
+                                </span>
+                        </td>
+                        <td class="text-center">
+                            <div class="d-flex gap-2 justify-content-center">
+                                <a th:if="${!dg.daDuyet}"
+                                   th:href="@{/admin/danhgia/duyet/{id}(id=${dg.id})}"
+                                   class="btn-action btn-approve text-decoration-none">
+                                    <i class="bi bi-check-lg"></i> Duyệt
+                                </a>
+                                <a th:href="@{/admin/danhgia/delete/{id}(id=${dg.id})}"
+                                   class="btn-action btn-delete text-decoration-none"
+                                   onclick="return confirm('Bạn có chắc chắn muốn xóa đánh giá này?')">
+                                    <i class="bi bi-trash3"></i> Xóa
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(dsDanhGia)}">
+                        <td colspan="6" class="text-center py-5">
+                            <i class="bi bi-chat-dots text-light display-1 d-block mb-3"></i>
+                            <span class="text-muted">Chưa có đánh giá nào cho hệ thống này.</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

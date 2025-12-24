@@ -10,21 +10,24 @@ import java.util.List;
 
 @Repository
 public interface DanhGiaRepository extends JpaRepository<DanhGia, Long> {
-    List<DanhGia> findBySanPham_Id(Long sanPhamId);
 
+    // Lấy danh sách đánh giá của 1 sản phẩm (Dùng cho Admin xem chi tiết)
     List<DanhGia> findBySanPham_IdOrderByThoiGianDesc(Long sanPhamId);
+
+    // Lấy danh sách đánh giá đã duyệt (Dùng cho trang chủ/chi tiết sản phẩm)
     List<DanhGia> findBySanPham_IdAndDaDuyetTrueOrderByThoiGianDesc(Long sanPhamId);
 
+    // Kiểm tra trùng lặp đánh giá
     boolean existsBySanPham_IdAndNguoiDung_Id(Long sanPhamId, Long nguoiDungId);
 
-    List<DanhGia> findByDaDuyetFalse();
-    // ⭐ TÍNH SAO TRUNG BÌNH
-    // =========================
-    @Query("""
-        SELECT AVG(d.soSao)
-        FROM DanhGia d
-        WHERE d.sanPham.id = :sanPhamId
-          AND d.daDuyet = true
-    """)
+    List<DanhGia> findBySanPham_Id(Long sanPhamId);
+
+    // Tính sao trung bình
+    @Query("SELECT AVG(d.soSao) FROM DanhGia d WHERE d.sanPham.id = :sanPhamId AND d.daDuyet = true")
     Double tinhSaoTrungBinh(@Param("sanPhamId") Long sanPhamId);
+
+    // Các hàm cho Admin
+    List<DanhGia> findAllByOrderByThoiGianDesc();
+    List<DanhGia> findByDaDuyetFalseOrderByThoiGianDesc();
+    long countByDaDuyetFalse();
 }

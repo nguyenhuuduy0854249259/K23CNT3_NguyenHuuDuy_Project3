@@ -29,7 +29,7 @@ public class DanhMuc {
     private DanhMuc parent;
 
     // ===== CON =====
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER) // Thêm fetch type để luôn nạp danh mục con
     private List<DanhMuc> children;
 
     // ===== SẢN PHẨM =====

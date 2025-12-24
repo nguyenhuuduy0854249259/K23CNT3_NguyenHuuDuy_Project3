@@ -277,7 +277,7 @@
                     <div class="card p-4">
                         <h5>Đơn hàng của bạn</h5>
                         <div th:each="item : ${cartItems}" class="order-item">
-                            <img th:src="${item.sanPham.hinhAnh}" width="60" height="60">
+                            <img th:src="${'/uploads/'+ item.sanPham.hinhAnh}" width="60" height="60">
                             <div class="flex-grow-1">
                                 <strong th:text="${item.sanPham.ten}"></strong><br>
                                 <small th:text="'x' + ${item.soLuong}"></small>

@@ -1,175 +1,68 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      th:replace="layout/_LayoutUser :: layout(
+      th:replace="~{layout/_LayoutUser :: layout(
           'Chi tiết sản phẩm',
           ~{::content},
           ~{}
-      )">
+      )}">
 
 <th:block th:fragment="content">
     <style>
-        /* Tinh chỉnh bố cục chi tiết */
-        .product-detail-container {
-            background: #fff;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-        }
-
-        .img-detail-wrapper {
-            background-color: #fdfdfd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            border-radius: 12px;
-        }
-
-        .img-detail {
-            max-height: 400px;
-            object-fit: contain;
-            transition: transform 0.3s ease;
-        }
-
-        .img-detail:hover {
-            transform: scale(1.02);
-        }
-
-        .product-info-box {
-            padding: 10px 20px;
-        }
-
-        .product-name {
-            font-weight: 800;
-            color: #2d3436;
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-        }
-
-        .product-price-large {
-            font-size: 2rem;
-            color: #d63031;
-            font-weight: 800;
-            margin-bottom: 20px;
-            display: block;
-        }
-
-        .meta-item {
-            margin-bottom: 10px;
-            font-size: 0.95rem;
-            color: #636e72;
-        }
-
-        .meta-item strong {
-            color: #2d3436;
-            width: 120px;
-            display: inline-block;
-        }
-
-        /* Phần đánh giá */
-        .review-card {
-            background: #fcfcfc;
-            border-left: 4px solid #f4a100;
-            margin-bottom: 15px;
-            padding: 15px;
-            transition: 0.3s;
-        }
-
-        .review-card:hover {
-            background: #fff8eb;
-        }
-
-        .star-rating {
-            color: #f4a100;
-            font-weight: bold;
-        }
-
-        .review-form-box {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 12px;
-            margin-top: 30px;
-        }
-
-        .btn-buy-now {
-            background-color: #f4a100;
-            border: none;
-            padding: 12px 30px;
-            font-weight: 700;
-            border-radius: 8px;
-            color: white;
-            transition: 0.3s;
-        }
-
-        .btn-buy-now:hover {
-            background-color: #e69500;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(244, 161, 0, 0.3);
-            color: white;
-        }
+        .product-detail-container { background: #fff; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        .img-detail-wrapper { background-color: #fdfdfd; display: flex; align-items: center; justify-content: center; padding: 20px; border-radius: 12px; }
+        .img-detail { max-height: 400px; object-fit: contain; transition: transform 0.3s ease; }
+        .product-name { font-weight: 800; color: #2d3436; font-size: 1.8rem; margin-bottom: 15px; }
+        .product-price-large { font-size: 2rem; color: #d63031; font-weight: 800; margin-bottom: 20px; display: block; }
+        .review-card { background: #fcfcfc; border-left: 4px solid #f4a100; margin-bottom: 15px; padding: 15px; }
+        .star-rating { color: #f4a100; font-weight: bold; }
+        .review-form-box { background: #f8f9fa; padding: 25px; border-radius: 12px; margin-top: 30px; }
+        .btn-buy-now { background-color: #f4a100; border: none; padding: 12px 30px; font-weight: 700; border-radius: 8px; color: white; }
     </style>
 
     <div class="mb-4">
-        <a th:href="@{/sanpham}" class="text-muted text-decoration-none">
-            <small>← Quay lại danh sách sản phẩm</small>
-        </a>
+        <a th:href="@{/sanpham}" class="text-muted text-decoration-none small">← Quay lại danh sách sản phẩm</a>
+    </div>
+
+    <div th:if="${message}" class="alert alert-success alert-dismissible fade show shadow-sm mb-4">
+        <span th:text="${message}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show shadow-sm mb-4">
+        <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 
     <div th:if="${sp != null}" class="product-detail-container p-4">
         <div class="row">
             <div class="col-md-5">
                 <div class="img-detail-wrapper border">
-                    <img th:src="${sp.hinhAnh != null && sp.hinhAnh != ''} ? @{/images/{img}(img=${sp.hinhAnh})} : @{/images/no-image.png}"
-                         alt="Ảnh sản phẩm"
-                         class="img-fluid img-detail">
+                    <img th:src="${sp.hinhAnh != null && sp.hinhAnh != ''} ? @{/uploads/{img}(img=${sp.hinhAnh})} : @{/images/no-image.png}" class="img-fluid img-detail">
                 </div>
             </div>
-
             <div class="col-md-7">
-                <div class="product-info-box">
+                <div class="product-info-box p-2">
                     <h2 class="product-name" th:text="${sp.ten}"></h2>
 
-                    <span class="product-price-large"
-                          th:text="${#numbers.formatDecimal(sp.gia,0,'POINT',0,'COMMA')} + ' đ'"></span>
-
-                    <div class="meta-data mb-4">
-                        <div class="meta-item">
-                            <strong>Danh mục:</strong>
-                            <span class="badge bg-light text-dark border" th:text="${sp.danhMuc != null ? sp.danhMuc.ten : 'Chưa phân loại'}"></span>
-                        </div>
-                        <div class="meta-item">
-                            <strong>Thương hiệu:</strong>
-                            <span th:text="${sp.thuongHieu != null ? sp.thuongHieu.ten : 'Chưa có thương hiệu'}"></span>
-                        </div>
-                        <div class="meta-item mt-3">
-                            <strong>Mô tả:</strong>
-                            <p class="mt-2 text-secondary" style="line-height: 1.8;" th:text="${sp.moTa}"></p>
-                        </div>
+                    <div class="mb-3" th:if="${avgStar != null}">
+                        <span class="star-rating">⭐ <span th:text="${#numbers.formatDecimal(avgStar, 1, 1)}"></span> / 5.0</span>
                     </div>
 
-                    <hr>
+                    <span class="product-price-large" th:text="${#numbers.formatDecimal(sp.gia,0,'POINT',0,'COMMA')} + ' đ'"></span>
 
-                    <div class="mt-4">
-                        <div class="mt-4">
-                            <div sec:authorize="isAuthenticated()">
-                                <form th:action="@{/giohang/add}" method="post">
-                                    <input type="hidden" name="productId" th:value="${sp.id}" />
-                                    <input type="hidden" name="quantity" value="1" />
-                                    <button type="submit" class="btn btn-buy-now">
-                                        🛒 THÊM VÀO GIỎ HÀNG
-                                    </button>
-                                </form>
-                            </div>
+                    <div class="meta-data mb-4">
+                        <div class="small mb-2"><strong>Danh mục:</strong> <span th:text="${sp.danhMuc != null ? sp.danhMuc.ten : 'N/A'}"></span></div>
+                        <div class="small mb-2"><strong>Thương hiệu:</strong> <span th:text="${sp.thuongHieu != null ? sp.thuongHieu.ten : 'N/A'}"></span></div>
+                        <p class="text-secondary mt-3 small" th:text="${sp.moTa}"></p>
+                    </div>
 
-                            <div sec:authorize="!isAuthenticated()">
-                                <div class="alert alert-light border shadow-sm">
-                                    💡 Bạn cần
-                                    <a th:href="@{/auth/login}" class="fw-bold text-primary">đăng nhập</a>
-                                    để mua sản phẩm này.
-                                </div>
-                            </div>
-                        </div>
+                    <div sec:authorize="isAuthenticated()">
+                        <form th:action="@{/giohang/add}" method="post">
+                            <input type="hidden" name="productId" th:value="${sp.id}" />
+                            <input type="hidden" name="quantity" value="1" />
+                            <button type="submit" class="btn btn-buy-now">🛒 THÊM VÀO GIỎ HÀNG</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -178,31 +71,30 @@
     <div class="mt-5">
         <h4 class="fw-bold mb-4">Đánh giá từ khách hàng</h4>
 
-        <div th:if="${listDanhGia == null || #lists.isEmpty(listDanhGia)}" class="text-center py-4">
-            <p class="text-muted">Chưa có đánh giá nào. Hãy là người đầu tiên đánh giá sản phẩm này!</p>
+        <div th:if="${#lists.isEmpty(listDanhGia)}" class="text-center py-4">
+            <p class="text-muted small">Chưa có đánh giá nào. Hãy là người đầu tiên!</p>
         </div>
 
-        <div th:each="dg : ${listDanhGia}" class="review-card rounded shadow-sm">
-            <div class="d-flex justify-content-between align-items-center mb-2">
+        <div th:each="dg : ${listDanhGia}" class="review-card shadow-sm">
+            <div class="d-flex justify-content-between">
                 <div>
-                    <strong class="text-dark" th:text="${dg.nguoiDung != null ? dg.nguoiDung.username : 'Người dùng'}"></strong>
+                    <strong th:text="${dg.nguoiDung?.hoTen ?: 'Người dùng'}"></strong>
                     <span class="star-rating ms-2">
-                        <span th:each="i : ${#numbers.sequence(1, dg.soSao)}">⭐</span>
+                        <span th:if="${dg.soSao > 0}" th:each="i : ${#numbers.sequence(1, dg.soSao)}">⭐</span>
                     </span>
                 </div>
-                <small class="text-muted" th:text="${#temporals.format(dg.thoiGian,'dd/MM/yyyy HH:mm')}"></small>
+                <small class="text-muted" th:text="${#temporals.format(dg.thoiGian,'dd/MM/yyyy')}"></small>
             </div>
-            <p class="mb-0 text-secondary" th:text="${dg.binhLuan}"></p>
+            <p class="mt-2 mb-0 small text-secondary" th:text="${dg.binhLuan}"></p>
         </div>
 
         <div sec:authorize="isAuthenticated()" class="review-form-box shadow-sm">
-            <h5 class="fw-bold mb-3">Gửi đánh giá của bạn</h5>
+            <h5 class="fw-bold mb-3 small">Gửi nhận xét của bạn</h5>
             <form th:action="@{/sanpham/danhgia/{id}(id=${sp.id})}" method="post" th:object="${newDanhGia}">
                 <div class="row">
                     <div class="col-md-4 mb-3">
-                        <label class="form-label fw-bold small">Số sao</label>
-                        <select class="form-select border-0 shadow-sm" th:field="*{soSao}" required>
-                            <option th:value="null">-- Chọn mức độ hài lòng --</option>
+                        <label class="form-label small fw-bold">Mức độ hài lòng</label>
+                        <select class="form-select shadow-sm border-0" th:field="*{soSao}" required>
                             <option value="5">5 ⭐ (Tuyệt vời)</option>
                             <option value="4">4 ⭐ (Tốt)</option>
                             <option value="3">3 ⭐ (Bình thường)</option>
@@ -211,18 +103,16 @@
                         </select>
                     </div>
                     <div class="col-12 mb-3">
-                        <label class="form-label fw-bold small">Nội dung bình luận</label>
-                        <textarea class="form-control border-0 shadow-sm" th:field="*{binhLuan}" rows="3" placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm..." required></textarea>
+                        <textarea class="form-control shadow-sm border-0" th:field="*{binhLuan}" rows="3" placeholder="Nội dung đánh giá..." required></textarea>
                     </div>
                 </div>
-                <button class="btn btn-dark px-4 fw-bold">Gửi đánh giá ngay</button>
+                <button type="submit" class="btn btn-dark fw-bold px-4">Gửi đánh giá</button>
             </form>
         </div>
 
-        <div sec:authorize="!isAuthenticated()" class="mt-4 text-center p-4 bg-light rounded shadow-sm">
-            <p class="mb-0">Vui lòng <a th:href="@{/auth/login}" class="text-primary fw-bold">Đăng nhập</a> để gửi nhận xét về sản phẩm.</p>
+        <div sec:authorize="!isAuthenticated()" class="mt-4 text-center p-3 bg-light rounded">
+            <small>Vui lòng <a th:href="@{/auth/login}" class="fw-bold">Đăng nhập</a> để đánh giá sản phẩm.</small>
         </div>
     </div>
-
 </th:block>
 </html>

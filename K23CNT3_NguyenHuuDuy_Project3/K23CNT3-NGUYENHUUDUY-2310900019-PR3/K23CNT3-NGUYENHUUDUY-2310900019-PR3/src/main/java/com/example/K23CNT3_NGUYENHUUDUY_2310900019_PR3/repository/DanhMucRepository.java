@@ -11,4 +11,5 @@ import java.util.List;
 public interface DanhMucRepository extends JpaRepository<DanhMuc, Long> {
     // Danh mục cha (menu cấp 1)
     List<DanhMuc> findByParentIsNull();
+
 }
