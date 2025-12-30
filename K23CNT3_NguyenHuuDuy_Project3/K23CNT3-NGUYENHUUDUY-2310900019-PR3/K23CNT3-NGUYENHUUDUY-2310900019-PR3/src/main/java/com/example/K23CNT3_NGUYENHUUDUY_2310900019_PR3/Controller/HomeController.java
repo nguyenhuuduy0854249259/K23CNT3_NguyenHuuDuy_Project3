@@ -30,7 +30,7 @@ public class HomeController {
         model.addAttribute("dsDanhMuc", danhMucRepository.findAll());
 
         // 3. Lấy 5 SẢN PHẨM MỚI NHẤT (Sắp xếp theo ID giảm dần)
-        // Bạn có thể dùng PageRequest để giới hạn số lượng
+        // Dùng PageRequest để giới hạn số lượng
         List<SanPham> top5SanPham = sanPhamRepository.findAll(
                 org.springframework.data.domain.PageRequest.of(0, 5, org.springframework.data.domain.Sort.by("id").descending())
         ).getContent();
